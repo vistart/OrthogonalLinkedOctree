@@ -19,11 +19,11 @@ namespace vistart
 	namespace orthogonal_linked_octree
 	{
 		template<class TPointList,
-				class TPoint,
-				typename = typename std::enable_if<std::is_base_of<point_cloud_base_presentation::PointList<TPoint>, TPointList>::value, TPointList>::type>
+				 class TPoint,
+				 typename = typename std::enable_if<std::is_base_of<point_cloud_base_presentation::PointList<TPoint>, TPointList>::value, TPointList>::type>
 		class LinkedOctree : orthogonal_linked_list::Coordinate<3, OctreeNode>
 		{
-			
+			LinkedOctree() = default;
 		};
 	}
 }

@@ -15,9 +15,7 @@
 #include <vector>
 #include <unordered_map>
 #include "CoordinateDimensionMismatchException.h"
-#include <pybind11/pybind11.h>
 
-namespace py = pybind11;
 namespace vistart
 {
 	namespace orthogonal_linked_list
@@ -239,16 +237,4 @@ namespace vistart
 	}
 }
 
-
-PYBIND11_MODULE(OrthogonalLinkedList, m)
-{
-	//py::class_<vistart::orthogonal_linked_list::Coordinate<D, T>>(m, "Coordinate").def("check_coordinates_dimension_size", &vistart::orthogonal_linked_list::Coordinate<D, T>::check_coordinates_dimension_size);
-	py::class_<vistart::orthogonal_linked_list::Coordinate<2, int>>(m, "Coordinate")
-		.def(py::init<>())
-		.def("check_coordinate_dimension_size", &vistart::orthogonal_linked_list::Coordinate<2, int>::check_coordinates_dimension_size)
-		.def("erase", &vistart::orthogonal_linked_list::Coordinate<2, int>::erase)
-		.def("exists", &vistart::orthogonal_linked_list::Coordinate<2, int>::exists)
-		.def("get", &vistart::orthogonal_linked_list::Coordinate<2, int>::get)
-		.def("set", &vistart::orthogonal_linked_list::Coordinate<2, int>::set);
-}
 #endif
