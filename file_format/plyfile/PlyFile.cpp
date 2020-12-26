@@ -140,7 +140,7 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_element_vertex(fstrea
 	return true;
 }
 
-shared_ptr<PlyVertexList> vistart::point_cloud_base_presentation::PlyFile::GetPointList()
+shared_ptr<vistart::point_cloud_base_presentation::PlyVertexList> vistart::point_cloud_base_presentation::PlyFile::GetPointList()
 {
 	return this->point_list;
 }
@@ -169,7 +169,7 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_element_face(fstream&
 	return true;
 }
 
-shared_ptr<PlyFaceList> vistart::point_cloud_base_presentation::PlyFile::GetPointFaceList()
+shared_ptr<vistart::point_cloud_base_presentation::PlyFaceList> vistart::point_cloud_base_presentation::PlyFile::GetPointFaceList()
 {
 	return this->point_face_list;
 }
@@ -198,7 +198,7 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_element_edge(fstream&
 	return true;
 }
 
-std::shared_ptr<PlyEdgeList> vistart::point_cloud_base_presentation::PlyFile::GetPointEdgeList()
+std::shared_ptr<vistart::point_cloud_base_presentation::PlyEdgeList> vistart::point_cloud_base_presentation::PlyFile::GetPointEdgeList()
 {
 	return this->point_edge_list;
 }

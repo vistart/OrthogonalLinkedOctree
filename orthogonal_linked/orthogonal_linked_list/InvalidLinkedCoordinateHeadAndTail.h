@@ -11,9 +11,6 @@
 #ifndef __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL__
 #define __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL__
 #include <stdexcept>
-#include <pybind11/pybind11.h>
-
-#include "Coordinate.h"
 
 namespace vistart
 {

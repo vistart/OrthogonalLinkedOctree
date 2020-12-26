@@ -20,17 +20,17 @@ using namespace std;
 #include <stdexcept>
 #endif
 
-PointFace::PointFace()
+vistart::point_cloud_base_presentation::PointFace::PointFace()
 {
 	this->vertex_indices = make_shared<priority_queue<unsigned int, vector<unsigned int>, greater<>>>();
 }
 
-PointFace::~PointFace()
+vistart::point_cloud_base_presentation::PointFace::~PointFace()
 {
 	this->vertex_indices = nullptr;
 }
 
-bool PointFace::operator==(PointFace const& face) const
+bool vistart::point_cloud_base_presentation::PointFace::operator==(PointFace const& face) const
 {
 	if (this->vertex_indices->size() != face.vertex_indices->size()) return false;
 	auto a = this->vertex_indices;
@@ -44,7 +44,7 @@ bool PointFace::operator==(PointFace const& face) const
 	return true;
 }
 
-bool PointFace::operator!=(PointFace const& face) const
+bool vistart::point_cloud_base_presentation::PointFace::operator!=(PointFace const& face) const
 {
 	return !(*this == face);
 }

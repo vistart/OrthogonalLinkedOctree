@@ -11,7 +11,6 @@
 #ifndef __COORDINATE_DIMENSION_MISMATCH_EXCEPTION__
 #define __COORDINATE_DIMENSION_MISMATCH_EXCEPTION__
 #include <stdexcept>
-#include <pybind11/pybind11.h>
 
 /**
  * 坐标维度不匹配异常。当参数维度与目标维度不匹配时应当抛出此异常。

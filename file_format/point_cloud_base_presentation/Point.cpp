@@ -21,19 +21,19 @@ using namespace std;
 #include <stdexcept>
 #endif
 
-Point* Point::operator+(Point const& target)
+vistart::point_cloud_base_presentation::Point* vistart::point_cloud_base_presentation::Point::operator+(Point const& target)
 {
     offset(target.X(), target.Y(), target.Z());
     return this;
 }
 
-Point* Point::operator+(XYZ const& target)
+vistart::point_cloud_base_presentation::Point* vistart::point_cloud_base_presentation::Point::operator+(XYZ const& target)
 {
     offset(target.X, target.Y, target.Z);
     return this;
 }
 
-inline void Point::offset(double offset_x, double offset_y, double offset_z)
+inline void vistart::point_cloud_base_presentation::Point::offset(double offset_x, double offset_y, double offset_z)
 {
 #ifdef __AVX2__
     __m256d __m256d_origin = _mm256_set_pd(__X, __Y, __Z, 0);
@@ -52,17 +52,17 @@ inline void Point::offset(double offset_x, double offset_y, double offset_z)
 #endif
 }
 
-void Point::offset(Point const& target)
+void vistart::point_cloud_base_presentation::Point::offset(Point const& target)
 {
     offset(target.X(), target.Y(), target.Z());
 }
 
-void Point::offset(XYZ const& target)
+void vistart::point_cloud_base_presentation::Point::offset(XYZ const& target)
 {
     offset(target.X, target.Y, target.Z);
 }
 
-double Point::offset_of(double offset, Coordination const& coordination) const
+double vistart::point_cloud_base_presentation::Point::offset_of(double offset, Coordination const& coordination) const
 {
     switch (coordination)
     {
@@ -81,13 +81,13 @@ double Point::offset_of(double offset, Coordination const& coordination) const
 #endif
 }
 
-std::tuple<double, double, double> Point::offset_of(std::tuple<double, double, double> const& offset) const
+std::tuple<double, double, double> vistart::point_cloud_base_presentation::Point::offset_of(std::tuple<double, double, double> const& offset) const
 {
     const auto& [x, y, z] = offset;
     return make_tuple<double, double, double>(__X - x, __Y - y, __Z - z);
 }
 
-std::tuple<double, double, double> Point::offset_of(double const& x, double const& y, double const& z) const
+std::tuple<double, double, double> vistart::point_cloud_base_presentation::Point::offset_of(double const& x, double const& y, double const& z) const
 {
     return make_tuple<double, double, double>(__X - x, __Y - y, __Z - z);
 }

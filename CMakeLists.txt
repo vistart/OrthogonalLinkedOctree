@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third-party/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project ("OrthogonalLinkedOctree")
 aux_source_directory(. DIR_SRCS)
 include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presentation")
@@ -31,13 +31,15 @@ endif()
 
 # 包含子项目。
 add_subdirectory ("file_format/point_cloud_base_presentation")
-add_subdirectory ("plyfile")
+add_subdirectory ("file_format/plyfile")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_list")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_octree")
-find_path(BOOST_ASIO_INCLUDE_DIRS "boost/asio.hpp")
-target_include_directories(octree PRIVATE ${BOOST_ASIO_INCLUDE_DIRS})
+find_package(BOOST_ASIO_INCLUDE_DIRS "boost/asio.hpp")
+target_include_directories("orthogonal_linked_octree" PRIVATE ${BOOST_ASIO_INCLUDE_DIRS})
+find_package(pybind11 config_info REQUIRED)
+target_include_directories("orthogonal_linked_list" PRIVATE pybind11::lto pybind11::embed pybind11::module)
 
-set(SOURCES main.cpp)
+set(SOURCES OrthogonalLinkedOctree.cpp)
 set(CMAKE_CXX_STANDARD 17)
 target_compile_features ("point_cloud_base_presentation" PUBLIC cxx_std_17)
 target_compile_features ("plyfile" PUBLIC cxx_std_17)
@@ -46,7 +48,7 @@ target_compile_features ("orthogonal_linked_octree" PUBLIC cxx_std_17)
 
 # 添加链接
 add_executable(OrthogonalLinkedOctree ${SOURCES})
-target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
-target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
-target_link_libraries(OrthogonalLinkedOctree plyfile)
 target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
+target_link_libraries(OrthogonalLinkedOctree plyfile)
+target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
