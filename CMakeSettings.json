@@ -26,7 +26,7 @@
       "wslPath": "${defaultWSLPath}",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "variables": [],
-      "cmakeToolchain": "~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "cmakeToolchain": ""
     },
     {
       "name": "Linux-GCC-Debug",
@@ -48,7 +48,7 @@
       "remoteCopySourcesMethod": "rsync",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "variables": [],
-      "cmakeToolchain": "~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "cmakeToolchain": ""
     },
     {
       "name": "Linux-GCC-Release",
@@ -59,7 +59,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "cmakeToolchain": "~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cmakeToolchain": "",
       "inheritEnvironments": [ "linux_x64" ],
       "remoteMachineName": "${defaultRemoteMachineName}",
       "remoteCMakeListsRoot": "$HOME/.vs/${projectDirName}/${workspaceHash}/src",
@@ -82,7 +82,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "cmakeToolchain": "~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cmakeToolchain": "",
       "inheritEnvironments": [ "linux_x64" ],
       "wslPath": "${defaultWSLPath}",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
