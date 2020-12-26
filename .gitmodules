@@ -1,0 +1,3 @@
+[submodule "third_parth/vcpkg"]
+	path = third_parth/vcpkg
+	url = ../../microsoft/vcpkg
