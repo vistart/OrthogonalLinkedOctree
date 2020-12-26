@@ -34,6 +34,14 @@
 
 > 其它 Linux 发行版尚未测试。不保证在除 Ubuntu 以外的 Linux 发行版中可用。
 
+## 代码
+
+使用以下命令克隆项目仓库：
+
+```
+$ git clone https://github.com/vistart/OrthogonalLinkedOctree
+```
+
 ## 第三方库
 
 此项目使用到 [Boost](https://www.boost.org) 和 [pybind11](https://github.com/pybind/pybind11)。
@@ -91,3 +99,24 @@ CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=<Your Home Directory>/Project
 $ vcpkg/downloads
 ```
 目录下。您可以将此文件夹下的所有文件（不包括子文件夹）全部备份，以供移植使用，可以明显节省下载等待时间。
+
+### 安装 [Python](https://python.org)
+
+此项目还用到了 Python，因此需要您自行安装 [Python 解释器](https://python.org)，且将 Python 的引用和库目录添加到环境变量的 `Path` 中。
+
+在 Windows 中，以 Python 3.9.1 为例，默认情况下，Python 的引用和库目录地址分别为：
+- `C:\Program Files\Python39\include`
+- `C:\Program Files\Python39\libs`
+
+> 您需要在使用 Visual Studio 2019 打开或编译项目前将上述目录加入到系统变量的 `Path` 变量中。在打开和编译时修改任何环境变量都不起效。
+
+安装时，需要勾选：
+- `Add Python 3.9 to PATH`
+- `Install for all Users`
+- `Precompile standard library`
+- `Download debugging symbols`
+- `Download debug binaries (requires VS 2017 or later)`
+
+如果您不勾选最后三项，则无法编译调试。
+
+在 Ubuntu 中则沿用安装 `pybind` 时自动下载的 `Python`，无须单独处理。
