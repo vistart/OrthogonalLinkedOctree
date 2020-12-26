@@ -3,8 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vcpkg/scripts/buildsystems/vcpkg.cmake)
-project ("OrthogonalLinkedOctree")
+# set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vcpkg/scripts/buildsystems/vcpkg.cmake)
+# set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
+project ("OrthogonalLinkedOctree" LANGUAGES CXX)
 aux_source_directory(. DIR_SRCS)
 include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presentation")
 include_directories("${PROJECT_SOURCE_DIR}/file_format/plyfile")
@@ -45,7 +46,7 @@ if (Boost_FOUND)
 else()
     message(WARNING "Boost NOT FOUND!")
 endif()
-# find_package(pybind11 CONFIG REQUIRED)
+find_package(pybind11)
 
 set(SOURCES OrthogonalLinkedOctree.cpp)
 set(CMAKE_CXX_STANDARD 17)
@@ -56,7 +57,8 @@ target_compile_features ("orthogonal_linked_octree" PUBLIC cxx_std_17)
 
 # 添加链接
 add_executable(OrthogonalLinkedOctree ${SOURCES})
-target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
-target_link_libraries(OrthogonalLinkedOctree plyfile)
-target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
 target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctree plyfile)
+target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
+# target_link_libraries(OrthogonalLinkedOctree PRIVATE orthogonal_linked_list pybind11::lto pybind11::embed pybind11::module)

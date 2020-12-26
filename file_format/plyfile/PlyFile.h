@@ -28,7 +28,7 @@ namespace vistart
 		/*
 		 This class is used to describe the ply file.
 		 */
-		class PlyFile : public vistart::point_cloud_base_presentation::PointCloud<PlyVertexList, PlyVertex, PlyEdgeList, PlyEdge, PlyFaceList, PlyFace, PlyFile>
+		class PlyFile : public PointCloud<PlyVertexList, PlyVertex, PlyEdgeList, PlyEdge, PlyFaceList, PlyFace, PlyFile>
 		{
 		public:
 #pragma region Constructor & Destructor

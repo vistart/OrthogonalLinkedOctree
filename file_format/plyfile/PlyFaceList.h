@@ -25,7 +25,7 @@ namespace vistart
 		/*
 		 @TODO: Implement it.
 		 */
-		class PlyFaceList : public vistart::point_cloud_base_presentation::PointFaceList<PlyFace, PlyFaceList>
+		class PlyFaceList : public PointFaceList<PlyFace, PlyFaceList>
 		{
 		public:
 			PlyFaceList();

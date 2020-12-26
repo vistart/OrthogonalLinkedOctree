@@ -25,7 +25,7 @@ namespace vistart
 		/*
 		 @TODO: Implement it.
 		 */
-		class PlyFace : public vistart::point_cloud_base_presentation::PointFace
+		class PlyFace : public PointFace
 		{
 		public:
 			struct FaceDescription

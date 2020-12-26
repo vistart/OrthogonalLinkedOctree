@@ -26,7 +26,7 @@ namespace vistart
 		/*
 		 @TODO: Implement it.
 		 */
-		class PlyEdge : public vistart::point_cloud_base_presentation::PointEdge
+		class PlyEdge : public PointEdge
 		{
 		public:
 			enum PropertyNames {

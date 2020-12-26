@@ -24,7 +24,7 @@ namespace vistart
 		/*
 		 @TODO: Implement it.
 		 */
-		class PlyEdgeList : public vistart::point_cloud_base_presentation::PointEdgeList<vistart::point_cloud_base_presentation::PlyEdge, PlyEdgeList>
+		class PlyEdgeList : public PointEdgeList<PlyEdge, PlyEdgeList>
 		{
 		public:
 			/*
