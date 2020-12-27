@@ -123,7 +123,7 @@ Applied user-wide integration for this vcpkg root.
 
 CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=<Your VCPKG Directory>/scripts/buildsystems/vcpkg.cmake"
 ```
-您需要做的就是将这个编译条件添加到您的编译器或集成开发环境中。
+您需要做的就是将这个编译条件添加到您的编译器或集成开发环境中。Visual Studio 2019 一般会自动寻找 vcpkg 配置，无须特别设置。CLion 则需要在`File` | `Settings` | `Build, Execution, Deployment` | `CMake` 中为每个配置文件的 `CMake options` 添加上述选项。
 
 例如，我使用的编译选项为：
 ```
