@@ -111,6 +111,8 @@ $ vcpkg/vcpkg install boost pybind11
 $ vcpkg/vcpkg install boost:x64-linux pybind11:x64-linux
 ```
 
+> 我们推荐你在 64 位系统中使用 64 位代码包，以获得更好的性能。
+
 安装完成后，需要将 `vcpkg` 管理的代码包集成到我们的项目中，以便我们能找到它：
 ```
 $ vcpkg/vcpkg integrate install
@@ -119,13 +121,13 @@ $ vcpkg/vcpkg integrate install
 ```
 Applied user-wide integration for this vcpkg root.
 
-CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=<Your Home Directory>/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=<Your VCPKG Directory>/scripts/buildsystems/vcpkg.cmake"
 ```
 您需要做的就是将这个编译条件添加到您的编译器或集成开发环境中。
 
-默认的编译选项为：
+例如，我使用的编译选项为：
 ```
-"-DCMAKE_TOOLCHAIN_FILE=~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+"-DCMAKE_TOOLCHAIN_FILE=/home/vistart/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
 ```
 如果您也选择按照我的路径放置 vcpkg 及管理的代码包，则不需要做任何改动。
 
@@ -158,7 +160,7 @@ $ vcpkg/downloads
 
 # 测试
 
-TBD
+测试部分请参阅具体项目的相关介绍。项目链接为上方项目的标题。
 
 # 联系我
 
