@@ -40,9 +40,7 @@ $ contrib/download_prerequisites
 ```
 $ mkdir build
 $ cd build
-$ ../configure  -enable-checking=release -enable-languages=c,c++ -disable-multilib
+$ ../configure  -enable-checking=release -enable-languages=c,c++ -enable-multilib
 $ make -j 8
 $ sudo make install
 ```
-
-> 因为我们不需要 32 位开发环境，所以禁用了多重库。
