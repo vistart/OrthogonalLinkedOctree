@@ -67,6 +67,8 @@
   - pkg-config
 - CLion 2020.3
 
+> Ubuntu 16.04 的环境准备请参照[此文档](INSTALL_UBUNTU1604.md)。
+
 > 其它 Linux 发行版尚未测试。不保证在除 Ubuntu 以外的 Linux 发行版中可用。
 
 ## 代码
