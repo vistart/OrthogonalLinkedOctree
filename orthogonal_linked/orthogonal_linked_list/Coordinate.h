@@ -106,7 +106,7 @@ namespace vistart
 					size_t index = 0;
 					for (int i = 0; i < D; i++)
 					{
-						index += static_cast<size_t>(c[i] & mask) << (i * dimension_length);
+						index += static_cast<size_t>(c[i] & mask) << i * dimension_length;
 					}
 					return index;
 				}

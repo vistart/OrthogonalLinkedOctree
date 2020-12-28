@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019 - 2020 vistart
  * @license https://vistart.me/license/
 */
-#pragma once
+
 #define BOOST_TEST_MODULE Test
 #include <boost/test/included/unit_test.hpp>
 
@@ -223,6 +223,17 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(r2[1], 0);
 		}
 
+		BOOST_AUTO_TEST_CASE(TestCoordinate2DOperatorBracket)
+        {
+            const auto type_length = sizeof(size_t) * 8;
+            const auto dimension_length = type_length / 2;
+            const Coordinate<2, unsigned int>::coordinates_type& c = {1, 2};
+
+            size_t result = (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
+            Coordinate<2, unsigned int>::Hash h;
+            BOOST_REQUIRE_EQUAL(h.operator()(c), result);
+        }
+
 		/**
 		 * 测试二维空间添加坐标元素。
 		 * 1. 实例化时不抛出异常。
@@ -376,6 +387,17 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(r3[1], 2);
 			BOOST_REQUIRE_EQUAL(r3[2], 0);
 		}
+
+        BOOST_AUTO_TEST_CASE(TestCoordinate3DOperatorBracket)
+        {
+            const auto type_length = sizeof(size_t) * 8;
+            const auto dimension_length = type_length / 3;
+            const Coordinate<3, unsigned int>::coordinates_type& c = {1, 2, 3};
+
+            size_t result = (static_cast<size_t>(c[2]) << 2 * dimension_length) + (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
+            Coordinate<3, unsigned int>::Hash h;
+            BOOST_REQUIRE_EQUAL(h.operator()(c), result);
+        }
 		BOOST_AUTO_TEST_SUITE_END()
 
 		BOOST_AUTO_TEST_SUITE(TestLinkedCoordinate)
