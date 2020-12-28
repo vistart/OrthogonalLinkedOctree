@@ -8,8 +8,8 @@
  * @license https://vistart.me/license/
 */
 #pragma once
-#ifndef __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL__
-#define __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL__
+#ifndef __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL_H__
+#define __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL_H__
 #include <stdexcept>
 
 namespace vistart

@@ -8,8 +8,8 @@
  * @license https://vistart.me/license/
 */
 #pragma once
-#ifndef __COORDINATE__
-#define __COORDINATE__
+#ifndef __COORDINATE_H__
+#define __COORDINATE_H__
 
 #include <memory>
 #include <vector>

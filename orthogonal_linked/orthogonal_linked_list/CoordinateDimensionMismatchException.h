@@ -8,8 +8,8 @@
  * @license https://vistart.me/license/
 */
 #pragma once
-#ifndef __COORDINATE_DIMENSION_MISMATCH_EXCEPTION__
-#define __COORDINATE_DIMENSION_MISMATCH_EXCEPTION__
+#ifndef __COORDINATE_DIMENSION_MISMATCH_EXCEPTION_H__
+#define __COORDINATE_DIMENSION_MISMATCH_EXCEPTION_H__
 #include <stdexcept>
 
 /**

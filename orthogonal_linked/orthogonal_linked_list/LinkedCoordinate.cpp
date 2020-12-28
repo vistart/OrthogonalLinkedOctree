@@ -7,4 +7,9 @@
  * @copyright Copyright (c) 2019 - 2020 vistart
  * @license https://vistart.me/license/
 */
+#ifndef __LINKED_COORDINATE_H__
 #include "LinkedCoordinate.h"
+#endif
+
+#ifdef __LINKED_COORDINATE_H__
+#endif

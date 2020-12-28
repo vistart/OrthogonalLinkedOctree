@@ -7,4 +7,9 @@
  * @copyright Copyright (c) 2019 - 2020 vistart
  * @license https://vistart.me/license/
 */
+#ifndef __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL_H__
 #include "InvalidLinkedCoordinateHeadAndTail.h"
+#endif
+
+#ifdef __INVALID_LINKED_COORDINATE_HEAD_AND_TAIL_H__
+#endif

@@ -8,6 +8,8 @@
  * @license https://vistart.me/license/
 */
 #pragma once
+#ifndef __LINKED_COORDINATE_H__
+#define __LINKED_COORDINATE_H__
 #include "Coordinate.h"
 #include "InvalidLinkedCoordinateHeadAndTail.h"
 
@@ -732,3 +734,4 @@ namespace vistart
 
 	}
 }
+#endif
