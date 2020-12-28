@@ -102,7 +102,7 @@ $ vcpkg/downloads
 ```
 目录下。您可以将此文件夹下的所有文件（不包括子文件夹）全部备份，以供移植使用，可以明显节省下载等待时间。
 
-### 安装 [Python](https://python.org)
+### 安装 [Python](https://python.org) 并集成到 CMake 项目中
 
 此项目还用到了 Python，因此需要您自行安装 [Python 解释器](https://python.org)，且将 Python 的引用和库目录添加到环境变量的 `Path` 中。
 
@@ -120,6 +120,13 @@ $ vcpkg/downloads
 - `Download debug binaries (requires VS 2017 or later)`
 
 如果您不勾选最后三项，则无法编译调试。
+
+安装好后，`pybind` 可能依旧无法找到 `Python` 的安装位置。此时，需要在 `CMakeSettings.json` 中的 `CMake 命令参数` 中指定，如下所示：
+```
+-DPYTHON_EXECUTABLE="C:\Program Files\Python39\python.exe"
+```
+
+> Python 可执行路径请根据自己的实际情况修改。
 
 在 Ubuntu 中则沿用安装 `pybind` 时自动下载的 `Python`，无须单独处理。但 `pybind` 依赖的 `Python` 版本通常与操作系统默认的版本不相同。如 Ubuntu 20.04 的默认 `Python` 版本为 `3.8.5`，而目前 `pybind` 依赖的 `Python` 版本为 `3.9.0`，二者并不匹配。引用不同版本 `Python` 编译的代码版不能互通。为了能保证二者相同，则需要在编译时通过指定 Python 版本实现。
 
