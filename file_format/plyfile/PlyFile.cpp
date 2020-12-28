@@ -37,8 +37,7 @@ vistart::point_cloud_base_presentation::PlyFile::PlyFile(string const& file_path
 	this->point_edge_list = make_shared<PlyEdgeList>();
 	this->point_face_list = make_shared<PlyFaceList>();
 	open(this->filename);
-	if (read(this->file))
-		this->valid = true;
+	this->valid = read(this->file);
 }
 
 vistart::point_cloud_base_presentation::PlyFile::~PlyFile()
@@ -227,8 +226,10 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_header(fstream& f)
 	file.seekg(0, ios::beg);
 
     // Reading the header of a ply file.
+    unsigned int times = 0;
 	while (f >> buffer)
 	{
+	    times++;
 		// Regardless of the case of the current word, it is converted to lower case for comparison.
 		transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
 
@@ -322,6 +323,7 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_header(fstream& f)
 			break;
 		}
 	}
+	if (times == 0) return false;
 	return true;
 }
 

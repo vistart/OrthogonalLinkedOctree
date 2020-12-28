@@ -30,13 +30,21 @@ namespace vistart
             LinkedOctreeInPly(std::string const& file_path, unsigned int depth)
             {
                 plyfile = std::make_shared<vistart::point_cloud_base_presentation::PlyFile>(file_path);
-                vistart::orthogonal_linked_octree::LinkedOctree<
-                        vistart::point_cloud_base_presentation::PlyVertexList,
-                        vistart::point_cloud_base_presentation::PlyVertex,
-                        vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(plyfile->GetPointList(), depth);
+                if (plyfile->GetIsValid())
+                    octree = std::make_shared<vistart::orthogonal_linked_octree::LinkedOctree<
+                            vistart::point_cloud_base_presentation::PlyVertexList,
+                            vistart::point_cloud_base_presentation::PlyVertex,
+                            vistart::point_cloud_base_presentation::PlyFile>>(plyfile->GetPointList(), depth);
+                else
+                    std::cout << "Invalid file!" << std::endl;
             }
         protected:
             std::shared_ptr<vistart::point_cloud_base_presentation::PlyFile> plyfile;
+            std::shared_ptr<
+            vistart::orthogonal_linked_octree::LinkedOctree<
+                    vistart::point_cloud_base_presentation::PlyVertexList,
+                    vistart::point_cloud_base_presentation::PlyVertex,
+                    vistart::point_cloud_base_presentation::PlyFile>> octree;
         };
     }
 }

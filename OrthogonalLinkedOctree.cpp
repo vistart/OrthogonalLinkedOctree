@@ -39,12 +39,14 @@ int main(int argc, char* argv[])
 	cout << "Reading the ply file: " << file_path << endl;
 	const auto plyfile = make_shared<vistart::point_cloud_base_presentation::PlyFile>(file_path);
 	cout << endl;
+    if (plyfile->GetIsValid()) {
+        const auto point_list = plyfile->GetPointList();
+        cout << "The last point is: " << *point_list->GetPoints()->back() << endl;
 
-	const auto point_list = plyfile->GetPointList();
-	cout << "The last point is: " << *point_list->GetPoints()->back() << endl;
-
-	cout << "Construct the Octree of Point Cloud: " << endl;
-	vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(point_list, depth);
-	//cout << "Hello World!\n";
+        cout << "Construct the Octree of Point Cloud: " << endl;
+        vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(
+                point_list, depth);
+    } else
+	cout << "Invalid file!\n";
 	return 0;
 }

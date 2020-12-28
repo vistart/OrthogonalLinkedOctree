@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 # set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vcpkg/scripts/buildsystems/vcpkg.cmake)
 # set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 project ("OrthogonalLinkedOctree" LANGUAGES CXX)
 aux_source_directory(. DIR_SRCS)
 include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presentation")
@@ -49,10 +51,10 @@ else()
     message(WARNING "Boost NOT FOUND!")
 endif()
 find_package(pybind11)
-pybind11_add_module(orthogonal_linked_octree_for_python
+pybind11_add_module(orthogonal_linked_octree_for_python SHARED
         "${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python/LinkedOctreeInPly.cpp"
         )
-
+target_link_libraries(orthogonal_linked_octree_for_python PRIVATE orthogonal_linked_octree orthogonal_linked_list plyfile point_cloud_base_presentation)
 
 set(SOURCES OrthogonalLinkedOctree.cpp)
 set(CMAKE_CXX_STANDARD 17)
