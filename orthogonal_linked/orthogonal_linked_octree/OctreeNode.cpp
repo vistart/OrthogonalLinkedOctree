@@ -7,4 +7,10 @@
  * @copyright Copyright (c) 2019 - 2020 vistart
  * @license https://vistart.me/license/
 */
+#ifndef __OCTREE_NODE_H__
 #include "OctreeNode.h"
+#endif
+
+#ifdef __OCTREE_NODE_H__
+
+#endif

@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	cout << "The last point is: " << *point_list->GetPoints()->back() << endl;
 
 	cout << "Construct the Octree of Point Cloud: " << endl;
-	vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree();
+	vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(point_list, depth);
 	//cout << "Hello World!\n";
 	return 0;
 }

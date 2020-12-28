@@ -11,6 +11,7 @@ include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presenta
 include_directories("${PROJECT_SOURCE_DIR}/file_format/plyfile")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_list")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree")
+include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python")
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
     message(
@@ -35,6 +36,7 @@ add_subdirectory ("file_format/point_cloud_base_presentation")
 add_subdirectory ("file_format/plyfile")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_list")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_octree")
+add_subdirectory ("orthogonal_linked/orthogonal_linked_octree_for_python")
 find_package(Boost)
 if (Boost_FOUND)
     message("Boost FOUND " + ${Boost_VERSION})
@@ -47,13 +49,20 @@ else()
     message(WARNING "Boost NOT FOUND!")
 endif()
 find_package(pybind11)
+pybind11_add_module(orthogonal_linked_octree_for_python
+        "${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python/LinkedOctreeInPly.cpp"
+        )
+
 
 set(SOURCES OrthogonalLinkedOctree.cpp)
 set(CMAKE_CXX_STANDARD 17)
+
 target_compile_features ("point_cloud_base_presentation" PUBLIC cxx_std_17)
 target_compile_features ("plyfile" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_list" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_octree" PUBLIC cxx_std_17)
+target_compile_features ("orthogonal_linked_octree_for_python" PUBLIC cxx_std_17)
+
 
 # 添加链接
 add_executable(OrthogonalLinkedOctree ${SOURCES})
@@ -61,5 +70,4 @@ target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
 target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
 target_link_libraries(OrthogonalLinkedOctree plyfile)
 target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
-# target_link_libraries(OrthogonalLinkedOctree PRIVATE orthogonal_linked_list pybind11::lto pybind11::embed pybind11::module)
 add_subdirectory ("orthogonal_linked/orthogonal_linked_list/test")

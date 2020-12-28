@@ -7,9 +7,9 @@
  * @copyright Copyright (c) 2019 - 2020 vistart
  * @license https://vistart.me/license/
 */
-#ifndef __OCTREE_H__
-#include "LinkedOctree.h"
+#ifndef __NODE_COORDINATE_H__
+#include "NodeCoordinate.h"
 #endif
 
-#ifdef __OCTREE_H__
+#ifdef __NODE_COORDINATE_H__
 #endif
