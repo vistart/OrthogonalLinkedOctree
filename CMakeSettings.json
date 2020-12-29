@@ -11,7 +11,8 @@
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [],
-      "cmakeToolchain": ""
+      "cmakeToolchain": "",
+      "intelliSenseMode": "windows-msvc-x64"
     },
     {
       "name": "WSL-GCC-Debug",
@@ -49,7 +50,8 @@
       "remoteCopySourcesMethod": "rsync",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "variables": [],
-      "cmakeToolchain": ""
+      "cmakeToolchain": "",
+      "intelliSenseMode": "linux-gcc-x64"
     },
     {
       "name": "Linux-GCC-Release",
@@ -71,7 +73,8 @@
       "remoteCopyBuildOutput": false,
       "remoteCopySourcesMethod": "rsync",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
-      "variables": []
+      "variables": [],
+      "intelliSenseMode": "linux-gcc-x64"
     },
     {
       "name": "WSL-GCC-Release",
@@ -95,12 +98,13 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "",
+      "cmakeCommandArgs": "scene0000_00_vh_clean.ply 12",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [],
-      "cmakeToolchain": ""
+      "cmakeToolchain": "",
+      "intelliSenseMode": "windows-msvc-x64"
     }
   ]
 }

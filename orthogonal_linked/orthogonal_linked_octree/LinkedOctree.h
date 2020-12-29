@@ -14,11 +14,12 @@
 
 #include "../../file_format/point_cloud_base_presentation/PointList.h"
 #include "../orthogonal_linked_list/LinkedCoordinate.h"
-#include "NodeCoordinate.h"
+// #include "NodeCoordinate.h"
 #include "OctreeNode.h"
 #include <algorithm>
 #include <iostream>
 #include <tuple>
+#include <vector>
 #include <map>
 #ifdef _MSC_VER
 #include <exception>
@@ -81,10 +82,11 @@ namespace vistart
                 for (auto i = 0; i < points->size(); i++) {
                     auto& point = (*points)[i];
                     const auto& node_coordinate = find_node_coordinate(point, middle_point, max_range, depth, leaf_width);
-                    auto result = insert_point(node_coordinate, point);
+                    auto result = this->insert_point(node_coordinate, point);
+                    //auto result = insert_point(node_coordinate, point);
                     if (!result)
                     {
-                        std::cout << node_coordinate << ":" << std::endl;
+                        std::cout << "(" << node_coordinate[0] << ", " << node_coordinate[1] << ", " << node_coordinate[2]  << ")" << ":" << std::endl;
                     }
                     if (i % 10000 == 9999)
                     {
@@ -102,11 +104,11 @@ namespace vistart
                 first_point->offset(leaf_width / 3, 0, 0);
                 std::cout << *first_point << std::endl;
 
-                OctreeNode<TPoint> first_node(first_point);
+                // OctreeNode<TPoint> first_node(first_point);
 
-                const auto& first_coordinate = find_node_coordinate(first_point, middle_point, max_range, depth, leaf_width);
+                // const auto& first_coordinate = find_node_coordinate(first_point, middle_point, max_range, depth, leaf_width);
 
-                merge_node(first_coordinate, first_node);
+                // merge_node(first_coordinate, first_node);
 
 #endif
             }
@@ -116,13 +118,25 @@ namespace vistart
              * Each point coordinate contains X, Y and Z.
              */
             typedef std::tuple<double, double, double> PointCoordinate;
+            typedef std::vector<unsigned int> NodeCoordinate;
 
             /*
              * The mapping between node coordinates and octree nodes.
              */
-            typedef std::unordered_map<NodeCoordinate, std::shared_ptr<OctreeNode<TPoint>>, NodeCoordinate::Hash> node_map;
+            //typedef std::unordered_map<NodeCoordinate, std::shared_ptr<OctreeNode<TPoint>>, NodeCoordinate::Hash> node_map;
+
+            virtual bool insert_point(NodeCoordinate const& c, std::shared_ptr<TPoint> point)
+            {
+                if (!this->exists(c))
+                {
+                    this->set(c, std::make_shared<OctreeNode<TPoint>>());
+                }
+                const auto& node = this->get(c);
+                *node << point;
+                return true;
+            }
         protected:
-            node_map nodes;
+            //node_map nodes;
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.
             /**
              * x:[lower, higher]
@@ -146,7 +160,7 @@ namespace vistart
                 std::cout << "Octree Stats:" << std::endl;
                 size_t count = 0;
                 std::map<size_t, unsigned int> count_per_node;
-                for (auto &p : this->nodes)
+                for (auto &p : this->pointers)
                 {
                     auto size = p.second->GetPoints().size();
                     count += size;
@@ -155,7 +169,7 @@ namespace vistart
                         ++iterator->second;
                     }
                 }
-                std::cout << "Nodes: " << this->nodes.size() << ", Depth: " << (int)depth << ", Average Density: " << (float)count / this->nodes.size() << std::endl;
+                std::cout << "Nodes: " << this->pointers.size() << ", Depth: " << (int)depth << ", Average Density: " << (float)count / this->pointers.size() << std::endl;
 
                 std::cout << "Number of nodes containing # point(s):" << std::endl;
                 for (auto& c : count_per_node)
@@ -174,21 +188,24 @@ namespace vistart
              * @param node the node to inserted.
              * @return true only if `node_map` doesn't contain the passed-in `node`.
              */
+             /*
             bool insert_node(NodeCoordinate const& node_coordinate, std::shared_ptr<OctreeNode<TPoint>> const& node)
             {
                 /**
                  * If the coordinates of the current node already exist, it is considered that the current node cannot insert a new node.
                  */
+             /*
                 if (node_exists(node_coordinate))
                     return false;
                 auto result = this->nodes.insert({ node_coordinate, node });
                 return result.second;
-            }
+            }*/
 
+            /*
             bool node_exists(NodeCoordinate const& node_coordinate)
             {
                 return this->nodes.find(node_coordinate) != this->nodes.end();
-            }
+            }*/
 
             /**
              * Insert a Point into Octree.
@@ -198,6 +215,7 @@ namespace vistart
              *
              * @return true if inserted.
              */
+             /*
             bool insert_point(NodeCoordinate const& node_coordinate, std::shared_ptr<TPoint> const& point)
             {
                 if (!node_exists(node_coordinate) && !insert_node(node_coordinate, std::make_shared<OctreeNode<TPoint>>()))
@@ -205,7 +223,7 @@ namespace vistart
                 const auto& result = nodes[node_coordinate];
                 *result << point;
                 return true;
-            }
+            }*/
 
             /**
              * Merge node.
@@ -215,18 +233,19 @@ namespace vistart
              *
              * @return
              */
+             /*
             bool merge_node(NodeCoordinate const& dest, OctreeNode<TPoint> const& source)
             {
                 if (!node_exists(dest))
                     return false;
-                /*
+
                 for (auto& p : source.GetPoints())
                 {
                     if (!insert_point(dest, p))
                         return false;
-                }*/
+                }
                 return true;
-            }
+            }*/
 
             /**
              * Find the boundary of the point cloud.
@@ -313,7 +332,7 @@ namespace vistart
              *
              * @return The coordinates of the node where the current point is located.
              */
-            static NodeCoordinate find_node_coordinate(std::shared_ptr<TPoint> const& point, PointCoordinate const& middle_point, double const& max_range, unsigned char const& depth, double const& leaf_width)
+            static NodeCoordinate const find_node_coordinate(std::shared_ptr<TPoint> const& point, PointCoordinate const& middle_point, double const& max_range, unsigned char const& depth, double const& leaf_width)
             {
                 const auto& [x_mid, y_mid, z_mid] = middle_point;
                 const auto half_leaf_width_with_max_range = (max_range + leaf_width) / 2;
@@ -324,7 +343,7 @@ namespace vistart
                 const auto x_th = static_cast<unsigned int>(offset_of_x / leaf_width);
                 const auto y_th = static_cast<unsigned int>(offset_of_y / leaf_width);
                 const auto z_th = static_cast<unsigned int>(offset_of_z / leaf_width);
-                return NodeCoordinate (x_th, y_th, z_th, depth);
+                return {x_th, y_th, z_th};
             }
 
             /**
