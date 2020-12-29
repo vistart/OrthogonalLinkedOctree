@@ -64,9 +64,9 @@ namespace vistart
                 {
                     return
                         // static_cast<size_t>(i.depth) << 60 ^
-                            static_cast<size_t>(i.X & 0xFFFFF) << 42 ^
-                            static_cast<size_t>(i.Y & 0xFFFFF) << 21 ^
-                            static_cast<size_t>(i.Z & 0xFFFFF);
+                            static_cast<size_t>(i.X & 0x1FFFFF) << 42 ^
+                            static_cast<size_t>(i.Y & 0x1FFFFF) << 21 ^
+                            static_cast<size_t>(i.Z & 0x1FFFFF);
                 }
             };
             /*

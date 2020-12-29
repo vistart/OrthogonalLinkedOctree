@@ -59,7 +59,7 @@ namespace vistart
 
                 // Find the middle point of each dimension.
 
-                const auto middle_point = OctreeNode<TPoint>::find_middle_point(boundaries);
+                const auto middle_point = find_middle_point(boundaries);
                 max_range = find_max_range(boundaries);
 
                 leaf_width = max_range / ((base_depth << depth) - 1);
@@ -80,7 +80,7 @@ namespace vistart
                 //nodes.rehash(points->size());
                 for (auto i = 0; i < points->size(); i++) {
                     auto& point = (*points)[i];
-                    const auto& node_coordinate = OctreeNode<TPoint>::find_node_coordinate(point, middle_point, max_range, depth, leaf_width);
+                    const auto& node_coordinate = find_node_coordinate(point, middle_point, max_range, depth, leaf_width);
                     auto result = insert_point(node_coordinate, point);
                     if (!result)
                     {
@@ -104,13 +104,18 @@ namespace vistart
 
                 OctreeNode<TPoint> first_node(first_point);
 
-                const auto& first_coordinate = OctreeNode<TPoint>::find_node_coordinate(first_point, middle_point, max_range, depth, leaf_width);
+                const auto& first_coordinate = find_node_coordinate(first_point, middle_point, max_range, depth, leaf_width);
 
                 merge_node(first_coordinate, first_node);
 
 #endif
             }
             ~LinkedOctree() = default;
+            /*
+             * Point coordinate.
+             * Each point coordinate contains X, Y and Z.
+             */
+            typedef std::tuple<double, double, double> PointCoordinate;
 
             /*
              * The mapping between node coordinates and octree nodes.
@@ -119,6 +124,11 @@ namespace vistart
         protected:
             node_map nodes;
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.
+            /**
+             * x:[lower, higher]
+             * y:[lower, higher]
+             * z:[lower, higher]
+             */
             std::tuple<std::tuple<double, double>, std::tuple<double, double>, std::tuple<double, double>> boundaries;
             double max_range = 1;
             /**
@@ -285,6 +295,66 @@ namespace vistart
                 const auto [y_range_min, y_range_max] = y_range;
                 const auto [z_range_min, z_range_max] = z_range;
                 return std::max(x_range_max - x_range_min, std::max(y_range_max - y_range_min, z_range_max - z_range_min));
+            }
+
+            /**
+             * Calculate the coordinates of the node where a certain point is located.
+             *
+             * This method uses the point in space and the common maximum range of the three dimensions to determine the spatial range.
+             * Before using this method, you can use `find_middle_point()` to calculate the midpoint of the space, and then pass it in as a parameter.
+             *
+             * Then, you need to specify the depth of the node in the octree. This parameter determines the node coordinate value.
+             *
+             * @param point The target point.
+             * @param middle_point The midpoint of the space.
+             * @param max_range Common maximum range of the three dimensions.
+             * @param depth The depth of the node in the octree. The default depth is 8.
+             * @param leaf_width
+             *
+             * @return The coordinates of the node where the current point is located.
+             */
+            static NodeCoordinate find_node_coordinate(std::shared_ptr<TPoint> const& point, PointCoordinate const& middle_point, double const& max_range, unsigned char const& depth, double const& leaf_width)
+            {
+                const auto& [x_mid, y_mid, z_mid] = middle_point;
+                const auto half_leaf_width_with_max_range = (max_range + leaf_width) / 2;
+                const auto& [offset_of_x, offset_of_y, offset_of_z] = point->offset_of(x_mid - half_leaf_width_with_max_range, y_mid - half_leaf_width_with_max_range, z_mid - half_leaf_width_with_max_range);
+                //const auto offset_of_x = point->offset_of(x_mid - (max_range + leaf_width) / 2, Point::Coordination::X);
+                //const auto offset_of_y = point->offset_of(y_mid - (max_range + leaf_width) / 2, Point::Coordination::Y);
+                //const auto offset_of_z = point->offset_of(z_mid - (max_range + leaf_width) / 2, Point::Coordination::Z);
+                const auto x_th = static_cast<unsigned int>(offset_of_x / leaf_width);
+                const auto y_th = static_cast<unsigned int>(offset_of_y / leaf_width);
+                const auto z_th = static_cast<unsigned int>(offset_of_z / leaf_width);
+                return NodeCoordinate (x_th, y_th, z_th, depth);
+            }
+
+            /**
+             * Calculate the coordinates of the midpoint in the specified space.
+             *
+             * @param x_range_min
+             * @param x_range_max
+             * @param y_range_min
+             * @param y_range_max
+             * @param z_range_min
+             * @param z_range_max
+             * @return the point coordinate of midpoint.
+             */
+            static PointCoordinate find_middle_point(double x_range_min, double x_range_max, double y_range_min, double y_range_max, double z_range_min, double z_range_max)
+            {
+                return std::make_tuple((x_range_max + x_range_min) / 2, (y_range_max + y_range_min) / 2, (z_range_max + z_range_min) / 2);
+            }
+            /**
+             * Calculate the coordinates of the midpoint in the specified space.
+             *
+             * @param boundaries The boundary of the space to be calculated.
+             * @return the point coordinate of midpoint.
+             */
+            static PointCoordinate find_middle_point(std::tuple<std::tuple<double, double>, std::tuple<double, double>, std::tuple<double, double>> const& boundaries)
+            {
+                const auto& [x_range, y_range, z_range] = boundaries;
+                auto [x_range_min, x_range_max] = x_range;
+                auto [y_range_min, y_range_max] = y_range;
+                auto [z_range_min, z_range_max] = z_range;
+                return find_middle_point(x_range_min, x_range_max, y_range_min, y_range_max, z_range_min, z_range_max);
             }
 		};
 	}

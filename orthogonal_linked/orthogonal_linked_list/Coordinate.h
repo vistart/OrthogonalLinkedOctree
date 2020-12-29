@@ -230,6 +230,12 @@ namespace vistart
 				c[d] = 0;
 				return c;
 			}
+
+			Coordinate& operator<<(std::tuple<coordinates_type, std::shared_ptr<T>> v)
+            {
+                const auto& [c, t] = v;
+                this->set(c, v);
+            }
 		
 		protected:
 			pointers_map pointers;
