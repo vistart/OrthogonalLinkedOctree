@@ -14,7 +14,7 @@ endif()
 if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS "Visual Studio 2019 would detect the vcpkg.cmake automatically.")
     # set(CMAKE_TOOLCHAIN_FILE C:/Users/vistart/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake)
-    set(PYTHON_EXECUTABLE "C:/Program Files/Python39/python.exe")
+    set(PYTHON_EXECUTABLE "C:/Program Files/Python38/python.exe")
     # 代码节数超过了默认上限，需要开启 bigobj。
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
@@ -23,6 +23,7 @@ project ("OrthogonalLinkedOctree" LANGUAGES CXX)
 aux_source_directory(. DIR_SRCS)
 include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presentation")
 include_directories("${PROJECT_SOURCE_DIR}/file_format/plyfile")
+include_directories("${PROJECT_SOURCE_DIR}/file_format/plyfile_for_python")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_list")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python")
@@ -53,6 +54,7 @@ endif()
 # 包含子项目。
 add_subdirectory ("file_format/point_cloud_base_presentation")
 add_subdirectory ("file_format/plyfile")
+add_subdirectory ("file_format/plyfile_for_python")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_list")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_octree")
 add_subdirectory ("orthogonal_linked/orthogonal_linked_octree_for_python")
@@ -72,12 +74,17 @@ pybind11_add_module(orthogonal_linked_octree_for_python SHARED
         "${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python/LinkedOctreeInPly.cpp"
         )
 target_link_libraries(orthogonal_linked_octree_for_python PRIVATE orthogonal_linked_octree orthogonal_linked_list plyfile point_cloud_base_presentation)
+pybind11_add_module(plyfile_for_python SHARED
+        "${PROJECT_SOURCE_DIR}/file_format/plyfile_for_python/PyPlyFile.cpp"
+        )
+target_link_libraries(plyfile_for_python PRIVATE plyfile point_cloud_base_presentation)
 
 set(SOURCES OrthogonalLinkedOctree.cpp)
 set(CMAKE_CXX_STANDARD 17)
 
 target_compile_features ("point_cloud_base_presentation" PUBLIC cxx_std_17)
 target_compile_features ("plyfile" PUBLIC cxx_std_17)
+target_compile_features ("plyfile_for_python" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_list" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_octree" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_octree_for_python" PUBLIC cxx_std_17)

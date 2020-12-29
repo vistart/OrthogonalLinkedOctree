@@ -36,7 +36,7 @@ namespace vistart
 			 *
 			 */
 			explicit PlyFile(std::string const& file_path);
-			~PlyFile();
+			virtual ~PlyFile();
 #pragma endregion
 
 #pragma region File Format

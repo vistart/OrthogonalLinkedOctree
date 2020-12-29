@@ -207,7 +207,7 @@ namespace vistart
 			 */
 			[[nodiscard]] static bool coordinates_equal_beyond_dimension(coordinates_type const& c1, coordinates_type const& c2, unsigned int d)
 			{
-				if (c1.size() != c2.size()) throw CoordinateDimensionMismatchException(c1.size(), c2.size());
+				if (c1.size() != c2.size()) throw CoordinateDimensionMismatchException(static_cast<unsigned char>(c1.size()), static_cast<unsigned char>(c2.size()));
 				for (int i = 0; i < D; i++)
 				{
 					if (i == d) continue;
@@ -226,7 +226,7 @@ namespace vistart
 			 */
 			[[nodiscard]] static coordinates_type coordinates_beyond_dimension(coordinates_type c, unsigned int d)
 			{
-				if (c.size() != D) throw CoordinateDimensionMismatchException(c.size(), D);
+				if (c.size() != D) throw CoordinateDimensionMismatchException(static_cast<unsigned char>(c.size()), D);
 				c[d] = 0;
 				return c;
 			}

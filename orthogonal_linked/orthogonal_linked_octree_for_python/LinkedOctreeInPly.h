@@ -8,12 +8,14 @@
  * @license https://vistart.me/license/
 */
 
-#ifndef __LINKEDOCTREE_H__
-#define __LINKEDOCTREE_H__
+#ifndef __LINKED_OCTREE_IN_PLY_H__
+#define __LINKED_OCTREE_IN_PLY_H__
 
 #include "../orthogonal_linked_octree/LinkedOctree.h"
 #include "../../file_format/plyfile/PlyFile.h"
+#include "OctreeNodeInPly.h"
 #include <pybind11/pybind11.h>
+#include <vector>
 #include <memory>
 #include <string>
 
@@ -23,21 +25,15 @@ namespace vistart
 {
     namespace orthogonal_linked_octree_for_python
     {
-        class LinkedOctreeInPly
+        class LinkedOctreeInPly : vistart::orthogonal_linked_octree::LinkedOctree<
+                vistart::point_cloud_base_presentation::PlyVertexList,
+                vistart::point_cloud_base_presentation::PlyVertex,
+                vistart::point_cloud_base_presentation::PlyFile
+                >
         {
         public:
-            LinkedOctreeInPly() = default;
-            LinkedOctreeInPly(std::string const& file_path, unsigned int depth)
-            {
-                plyfile = std::make_shared<vistart::point_cloud_base_presentation::PlyFile>(file_path);
-                if (plyfile->GetIsValid())
-                    octree = std::make_shared<vistart::orthogonal_linked_octree::LinkedOctree<
-                            vistart::point_cloud_base_presentation::PlyVertexList,
-                            vistart::point_cloud_base_presentation::PlyVertex,
-                            vistart::point_cloud_base_presentation::PlyFile>>(plyfile->GetPointList(), depth);
-                else
-                    std::cout << "Invalid file!" << std::endl;
-            }
+            LinkedOctreeInPly(std::string const&, unsigned int);
+
         protected:
             std::shared_ptr<vistart::point_cloud_base_presentation::PlyFile> plyfile;
             std::shared_ptr<
@@ -47,15 +43,6 @@ namespace vistart
                     vistart::point_cloud_base_presentation::PlyFile>> octree;
         };
     }
-}
-
-PYBIND11_MODULE(orthogonal_linked_octree_for_python, m) {
-    py::class_<
-            vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly
-            >(m, "LinkedOctreeInPly")
-            .def(py::init<>())
-            .def(py::init<std::string const&, unsigned int>())
-            ;
 }
 
 #endif //__LINKEDOCTREE_H__
