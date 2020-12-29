@@ -4,14 +4,20 @@
 cmake_minimum_required (VERSION 3.8)
 message(STATUS "The Operation System is ${CMAKE_HOST_SYSTEM_NAME}")
 if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+    # 工具链和 Python 可执行路径均为默认。请依据您自己的实际情况进行修改。
     set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(PYTHON_EXECUTABLE /usr/bin/python3)
+    # 只生成地址无关代码
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif()
 if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS "Visual Studio 2019 would detect the vcpkg.cmake automatically.")
     # set(CMAKE_TOOLCHAIN_FILE C:/Users/vistart/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(PYTHON_EXECUTABLE "C:/Program Files/Python39/python.exe")
+    # 代码节数超过了默认上限，需要开启 bigobj。
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
 endif()
 project ("OrthogonalLinkedOctree" LANGUAGES CXX)
 aux_source_directory(. DIR_SRCS)
@@ -20,6 +26,11 @@ include_directories("${PROJECT_SOURCE_DIR}/file_format/plyfile")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_list")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree")
 include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python")
+# 引用所有测试项目代码仅在 Debug 模式下有效。
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_list_test")
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
     message(
@@ -28,6 +39,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # 添加“_DEBUG”宏，以便使某些语句仅在 Debug 模式下生效。
     add_compile_options(-D_DEBUG)
     message(
             STATUS "MARCO '-DEBUG' enabled."
@@ -70,11 +82,14 @@ target_compile_features ("orthogonal_linked_list" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_octree" PUBLIC cxx_std_17)
 target_compile_features ("orthogonal_linked_octree_for_python" PUBLIC cxx_std_17)
 
-
 # 添加链接
 add_executable(OrthogonalLinkedOctree ${SOURCES})
 target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
 target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
 target_link_libraries(OrthogonalLinkedOctree plyfile)
 target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
-add_subdirectory ("orthogonal_linked/orthogonal_linked_list/test")
+
+# 所有测试项目仅在 Debug 模式下有效。
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_subdirectory("orthogonal_linked/orthogonal_linked_list_test")
+endif()
