@@ -2,11 +2,17 @@
 # 并包含子项目。
 #
 cmake_minimum_required (VERSION 3.8)
-
-# set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vcpkg/scripts/buildsystems/vcpkg.cmake)
-# set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+message(STATUS "The Operation System is ${CMAKE_HOST_SYSTEM_NAME}")
+if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+    set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+endif()
+if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
+    message(STATUS "Visual Studio 2019 would detect the vcpkg.cmake automatically.")
+    # set(CMAKE_TOOLCHAIN_FILE C:/Users/vistart/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif()
 project ("OrthogonalLinkedOctree" LANGUAGES CXX)
 aux_source_directory(. DIR_SRCS)
 include_directories("${PROJECT_SOURCE_DIR}/file_format/point_cloud_base_presentation")
@@ -21,7 +27,6 @@ if (NOT CMAKE_BUILD_TYPE)
     )
 endif()
 
-add_compile_options(-D_DEBUG)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-D_DEBUG)
     message(
