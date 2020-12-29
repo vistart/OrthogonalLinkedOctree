@@ -23,6 +23,8 @@ PYBIND11_MODULE(plyfile_for_python, m)
             vistart::point_cloud_base_presentation::PyPlyFile
     >(m, "PyPlyFile")
             .def(py::init<std::string const&>())
+            .def("GetFileFormat", &vistart::point_cloud_base_presentation::PyPlyFile::get_file_format)
+            .def("GetIsValid", &vistart::point_cloud_base_presentation::PyPlyFile::GetIsValid)
             ;
     ;
 }
