@@ -40,7 +40,7 @@ namespace vistart
                 NodeCoordinate c(X, Y, Z, depth);
                 OctreeNode(c, point);
             }
-            ~OctreeNode() = default;
+            virtual ~OctreeNode() = default;
 
             OctreeNode<T>& operator<<(std::shared_ptr<T> point)
             {
