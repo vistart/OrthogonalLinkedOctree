@@ -38,10 +38,10 @@ namespace vistart
 			 TYPE: NOTYPE, INT8, UINT8, INT16, UINT16, INT32, UINT32, FLOAT32, FLOAT64.
 				   (originated from PlyPropertyType::PlyPropertyDataType)
 			 */
-			struct VertexName {
+			typedef struct {
 				int name;
 				int type;
-			};
+			} VertexName;
 			/*
 			 Initialize a vertex, which is located at the origin, with the color is black,
 			 the ALPHA value is 255, the confidence is 1, and the intensity is 0.5.

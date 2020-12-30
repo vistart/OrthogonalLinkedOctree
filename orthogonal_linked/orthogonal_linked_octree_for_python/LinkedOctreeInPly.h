@@ -14,12 +14,9 @@
 #include "../orthogonal_linked_octree/LinkedOctree.h"
 #include "../../file_format/plyfile/PlyFile.h"
 #include "OctreeNodeInPly.h"
-#include <pybind11/pybind11.h>
 #include <vector>
 #include <memory>
 #include <string>
-
-namespace py = pybind11;
 
 namespace vistart
 {
@@ -33,14 +30,10 @@ namespace vistart
         {
         public:
             LinkedOctreeInPly(std::string const&, unsigned int);
+            virtual bool insert_point(NodeCoordinate const& c, std::shared_ptr<vistart::point_cloud_base_presentation::PlyVertex> point);
 
         protected:
             std::shared_ptr<vistart::point_cloud_base_presentation::PlyFile> plyfile;
-            std::shared_ptr<
-            vistart::orthogonal_linked_octree::LinkedOctree<
-                    vistart::point_cloud_base_presentation::PlyVertexList,
-                    vistart::point_cloud_base_presentation::PlyVertex,
-                    vistart::point_cloud_base_presentation::PlyFile>> octree;
         };
     }
 }

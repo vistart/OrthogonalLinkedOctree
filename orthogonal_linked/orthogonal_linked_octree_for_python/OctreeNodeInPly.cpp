@@ -12,14 +12,4 @@
 #endif
 
 #ifdef __OCTREE_NODE_IN_PLY_H__
-void vistart::orthogonal_linked_octree_for_python::OctreeNodeInPly::insert_point(std::shared_ptr<plyvertex> point) {
-    
-}
-PYBIND11_MODULE(orthogonal_linked_octree_for_python, m)
-{
-    py::class<
-            vistart::orthogonal_linked_octree_for_python::OctreeNodeInPly
-            >(m, "OctreeNodeInPly")
-            .def(py::init);
-}
 #endif

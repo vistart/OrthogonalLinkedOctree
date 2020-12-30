@@ -15,20 +15,19 @@
 vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly::LinkedOctreeInPly(std::string const& file_path, unsigned int depth)
 {
     plyfile = std::make_shared<vistart::point_cloud_base_presentation::PlyFile>(file_path);
-    if (plyfile->GetIsValid())
-        octree = std::make_shared<vistart::orthogonal_linked_octree::LinkedOctree<
+    if (plyfile->GetIsValid()) {
+        vistart::orthogonal_linked_octree::LinkedOctree<
                 vistart::point_cloud_base_presentation::PlyVertexList,
                 vistart::point_cloud_base_presentation::PlyVertex,
-                vistart::point_cloud_base_presentation::PlyFile>>(plyfile->GetPointList(), depth);
-    else
+                vistart::point_cloud_base_presentation::PlyFile>
+                (plyfile->GetPointList(), depth);
+    } else
         std::cout << "Invalid file!" << std::endl;
 }
 
-PYBIND11_MODULE(orthogonal_linked_octree_for_python, m) {
-    py::class_<
-            vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly
-    >(m, "LinkedOctreeInPly")
-            .def(py::init<std::string const&, unsigned int>())
-            ;
+bool vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly::insert_point(
+        const vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile>::NodeCoordinate &c,
+        std::shared_ptr<vistart::point_cloud_base_presentation::PlyVertex> point) {
+    return vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile>::insert_point(c, point);
 }
 #endif //__LINKED_OCTREE_IN_PLY_H__

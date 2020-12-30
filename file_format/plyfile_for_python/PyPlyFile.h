@@ -26,5 +26,4 @@ namespace vistart
     }
 }
 
-
 #endif //__PY_PLY_FILE_H__

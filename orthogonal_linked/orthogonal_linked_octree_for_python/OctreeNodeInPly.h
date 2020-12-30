@@ -13,9 +13,7 @@
 
 #include "../orthogonal_linked_octree/OctreeNode.h"
 #include "../../file_format/plyfile/PlyVertex.h"
-#include <pybind11/pybind11.h>
 #include <memory>
-namespace py = pybind11;
 namespace vistart {
     namespace orthogonal_linked_octree_for_python
     {
@@ -25,7 +23,7 @@ namespace vistart {
         public:
             typedef vistart::point_cloud_base_presentation::PlyVertex plyvertex;
             OctreeNodeInPly(std::shared_ptr<plyvertex> point) : OctreeNode(point) {}
-            void insert_point(std::shared_ptr<plyvertex> point);
+            void insert_point(std::shared_ptr<plyvertex> point) {};
         protected:
 
         };

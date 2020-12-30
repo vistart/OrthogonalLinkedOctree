@@ -71,11 +71,11 @@ else()
 endif()
 find_package(pybind11)
 pybind11_add_module(orthogonal_linked_octree_for_python SHARED
-        "${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python/LinkedOctreeInPly.cpp"
+        "${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_for_python/orthogonal_linked_octree_for_python.cpp"
         )
 target_link_libraries(orthogonal_linked_octree_for_python PRIVATE orthogonal_linked_octree orthogonal_linked_list plyfile point_cloud_base_presentation)
 pybind11_add_module(plyfile_for_python SHARED
-        "${PROJECT_SOURCE_DIR}/file_format/plyfile_for_python/PyPlyFile.cpp"
+        "${PROJECT_SOURCE_DIR}/file_format/plyfile_for_python/plyfile_for_python.cpp"
         )
 target_link_libraries(plyfile_for_python PRIVATE plyfile point_cloud_base_presentation)
 
