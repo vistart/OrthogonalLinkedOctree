@@ -17,7 +17,7 @@ namespace vistart
 {
     namespace point_cloud_base_presentation
     {
-        class PyPlyFile : vistart::point_cloud_base_presentation::PlyFile {
+        class PyPlyFile : public vistart::point_cloud_base_presentation::PlyFile {
         public:
             explicit PyPlyFile(std::string const& filePath) : PlyFile(filePath){}
             [[nodiscard]] std::string get_file_format() { return PlyFile::get_file_format(); }

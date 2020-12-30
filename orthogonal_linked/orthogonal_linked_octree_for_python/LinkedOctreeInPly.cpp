@@ -30,4 +30,5 @@ bool vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly::insert_poi
         std::shared_ptr<vistart::point_cloud_base_presentation::PlyVertex> point) {
     return vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile>::insert_point(c, point);
 }
+
 #endif //__LINKED_OCTREE_IN_PLY_H__

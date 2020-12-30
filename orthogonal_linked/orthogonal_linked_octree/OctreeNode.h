@@ -40,6 +40,10 @@ namespace vistart
                 NodeCoordinate c(X, Y, Z, depth);
                 OctreeNode(c, point);
             }
+            OctreeNode(std::unordered_set<std::shared_ptr<T>> const& points)
+            {
+                this->points = points;
+            }
             virtual ~OctreeNode() = default;
 
             OctreeNode<T>& operator<<(std::shared_ptr<T> point)

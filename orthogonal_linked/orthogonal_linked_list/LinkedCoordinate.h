@@ -31,7 +31,7 @@ namespace vistart
 		 * @param T 定义与基类相同。
 		 */
 		template<unsigned char D, typename T>
-		class LinkedCoordinate : Coordinate<D, T>
+		class LinkedCoordinate : public Coordinate<D, T>
 		{
 		public:
 

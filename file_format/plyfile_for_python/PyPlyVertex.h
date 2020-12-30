@@ -16,7 +16,7 @@ namespace vistart
 {
     namespace point_cloud_base_presentation
     {
-        class PyPlyVertex : vistart::point_cloud_base_presentation::PlyVertex {
+        class PyPlyVertex : public vistart::point_cloud_base_presentation::PlyVertex {
         public:
             PyPlyVertex() = default;
             PyPlyVertex(std::vector<VertexName> const& v, std::string const& a) : PlyVertex(v, a) {}

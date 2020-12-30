@@ -12,7 +12,10 @@
 #define __LINKED_OCTREE_IN_PLY_H__
 
 #include "../orthogonal_linked_octree/LinkedOctree.h"
+#include "../orthogonal_linked_octree/OctreeNode.h"
 #include "../../file_format/plyfile/PlyFile.h"
+#include "../../file_format/plyfile/PlyVertex.h"
+#include "../../file_format/plyfile/PlyVertexList.h"
 #include "OctreeNodeInPly.h"
 #include <vector>
 #include <memory>
@@ -22,7 +25,7 @@ namespace vistart
 {
     namespace orthogonal_linked_octree_for_python
     {
-        class LinkedOctreeInPly : vistart::orthogonal_linked_octree::LinkedOctree<
+        class LinkedOctreeInPly : public vistart::orthogonal_linked_octree::LinkedOctree<
                 vistart::point_cloud_base_presentation::PlyVertexList,
                 vistart::point_cloud_base_presentation::PlyVertex,
                 vistart::point_cloud_base_presentation::PlyFile
@@ -31,7 +34,6 @@ namespace vistart
         public:
             LinkedOctreeInPly(std::string const&, unsigned int);
             virtual bool insert_point(NodeCoordinate const& c, std::shared_ptr<vistart::point_cloud_base_presentation::PlyVertex> point);
-
         protected:
             std::shared_ptr<vistart::point_cloud_base_presentation::PlyFile> plyfile;
         };
