@@ -137,3 +137,7 @@ $ vcpkg/downloads
 直接添加 Python 可执行文件后，`pybind11` 会自动寻找当前 Python 版本和对应的引用和库目录。
 
 > Python 可执行路径请根据自己的实际情况修改。
+
+## 使用预制 Docker 镜像
+
+TBD
