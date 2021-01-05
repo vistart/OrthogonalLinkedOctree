@@ -67,3 +67,11 @@ python3 -m venv venv3x
 python setup.py install
 ```
 > 在 Python 2 和 Python 3 共存的环境则需要使用 `python3`。
+
+编译完成后，当前环境已安装好 PyTorch。如果想打包编译结果，给其他环境使用，可以使用以下命令：
+
+```
+pip wheel -vvv -e . --no-deps
+```
+
+> 注意！此次导出不包含任何依赖。如果要安装此导出包，则依赖包的版本需与编译时一致，否则可能导致无法预料的异常。
