@@ -4,7 +4,7 @@
  * | |/ // /(__  )  / / / /| || |     | |
  * |___//_//____/  /_/ /_/ |_||_|     |_|
  * @link https://vistart.me/
- * @copyright Copyright (c) 2019 - 2020 vistart
+ * @copyright Copyright (c) 2019 - 2021 vistart
  * @license https://vistart.me/license/
 */
 #pragma once
@@ -26,7 +26,7 @@ namespace vistart
 		 * TODO:
 		 * 1. 配合实现迭代器
 		 * 2. 配合实现算法
-		 * 
+		 *
 		 * @param D 定义与基类相同。
 		 * @param T 定义与基类相同。
 		 */
@@ -79,7 +79,7 @@ namespace vistart
 			typedef std::unordered_map<
 				base_coord_col,
 				std::shared_ptr<adjacent_ptrs>, // 指向所有维度近邻指针节点的指针。使用指针是因为返回该内容时避免复制一份而浪费时间和空间。
-			    struct Coordinate<D, T>::Hash
+				struct Coordinate<D, T>::Hash
 			> adjacent_ptrs_map;
 			/**
 			 * 坐标-做表指针映射表。
@@ -192,9 +192,26 @@ namespace vistart
 #pragma region 调试_用于暴露保护和私有级别的方法和属性
 #ifdef _DEBUG
 			std::vector<head_and_tail_in_dimension> const& __debug_head_and_tail_in_all_dimensions = head_and_tail_in_all_dimensions;
-#endif			
+			adjacent_ptrs_map const& __debug_adjacent_pointers = adjacent_pointers;
+			virtual bool __debug_adjacent_exists(base_coord_col const& c)
+			{
+				return this->adjacents_exists(c);
+			}
+			virtual std::shared_ptr<adjacent_ptrs> __debug_get_adjacents(base_coord_col const& c)
+			{
+				return this->get_adjacents(c);
+			}
+			virtual bool __debug_is_first_in_dimension(base_coord_col const& c, unsigned int const d)
+			{
+				return this->is_first_in_dimension(c, d);
+			}
+			virtual bool __debug_is_last_in_dimension(base_coord_col const& c, unsigned int const d)
+			{
+				return this->is_last_in_dimension(c, d);
+			}
+#endif
 #pragma endregion
-			
+
 		protected:
 			/**
 			 * 保存每个元素的近邻指针。不要求元素的位置与近邻指针的位置相匹配。
@@ -351,7 +368,7 @@ namespace vistart
 			virtual bool is_first_in_dimension(base_coord_col const& c, unsigned int const d)
 			{
 				const auto& c_ptr = this->get_adjacents(c);
-				return (*c_ptr)[d].prev == nullptr;
+				return c_ptr != nullptr && (*c_ptr)[d].prev == nullptr;
 			}
 
 			/**
@@ -365,7 +382,7 @@ namespace vistart
 			virtual bool is_last_in_dimension(base_coord_col const& c, unsigned int const d)
 			{
 				const auto& c_ptr = this->get_adjacents(c);
-				return (*c_ptr)[d].next == nullptr;
+				return c_ptr != nullptr && (*c_ptr)[d].next == nullptr;
 			}
 #pragma endregion
 
@@ -534,7 +551,7 @@ namespace vistart
 					const auto& c_a_head_ptr = this->get_adjacents(c_head);
 					(*c_a_head_ptr)[d].prev = std::make_shared<base_coord_col>(c);
 					// 改变头指针为新插入的节点。
-					this->set_head_and_tail(d, c, {this->get_coordinates_ptr(c), this->get_head_and_tail(d, c)->tail });
+					this->set_head_and_tail(d, c, { this->get_coordinates_ptr(c), this->get_head_and_tail(d, c)->tail });
 				}
 				else if (head[d] == c[d])
 				{// 目标插入位置已存在，什么也不做。
@@ -650,6 +667,7 @@ namespace vistart
 				{
 					remove_link_in_dimension(c, i);
 				}
+				this->adjacent_pointers.erase(c);
 			}
 
 			/**
@@ -694,7 +712,7 @@ namespace vistart
 					(*c_next_ptr)[d].prev = (*c_a_ptr)[d].prev;
 
 					const auto& ht = this->get_head_and_tail(d, c);
-					this->set_head_and_tail(d, c, { (*c_next_ptr)[d].next, ht->tail });
+					this->set_head_and_tail(d, c, { (*c_a_ptr)[d].next, ht->tail });
 				}
 				else if (!is_first && is_last)
 				{
@@ -705,7 +723,7 @@ namespace vistart
 					(*c_prev_ptr)[d].next = (*c_a_ptr)[d].next;
 
 					const auto& ht = this->get_head_and_tail(d, c);
-					this->set_head_and_tail(d, c, { ht->head, (*c_prev_ptr)[d].prev });
+					this->set_head_and_tail(d, c, { ht->head, (*c_a_ptr)[d].prev });
 				}
 				else
 					// if (!is_first && !is_last)
@@ -722,9 +740,9 @@ namespace vistart
 
 
 					const auto& ht = this->get_head_and_tail(d, c);
-					this->set_head_and_tail(d, c, { (*c_next_ptr)[d].next, (*c_prev_ptr)[d].prev });
+					// this->set_head_and_tail(d, c, { (*c_next_ptr)[d].next, (*c_prev_ptr)[d].prev });
 				}
-				this->adjacent_pointers.erase(c);
+				// this->adjacent_pointers.erase(c);
 			}
 #pragma endregion
 

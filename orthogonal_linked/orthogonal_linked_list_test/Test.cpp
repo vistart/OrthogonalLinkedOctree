@@ -89,6 +89,36 @@ namespace vistart
 			}
 			~LinkedCoordinate3DFixture() = default;
 		};
+		/*
+		 * 以6,7,9为中心，向六个方向间隔1分别添加1个元素。一共7个元素。
+		 */
+		struct LinkedCoordinate3DwithSevenElementsFixture1
+		{
+			std::shared_ptr<LinkedCoordinate<3, unsigned int>> c;
+			const unsigned int c_x = 6;
+			const unsigned int c_y = 7;
+			const unsigned int c_z = 9;
+			std::vector<unsigned int> const c11 = { 5,7,9 }; const unsigned int r11 = 17;
+			std::vector<unsigned int> const c_center = { 6,7,9 }; const unsigned int r_center = 18;
+			std::vector<unsigned int> const c13 = { 7,7,9 }; const unsigned int r13 = 19;
+			std::vector<unsigned int> const c21 = { 6,6,9 }; const unsigned int r21 = 27;
+			std::vector<unsigned int> const c23 = { 6,8,9 }; const unsigned int r23 = 37;
+			std::vector<unsigned int> const c31 = { 6,7,8 }; const unsigned int r31 = 47;
+			std::vector<unsigned int> const c33 = { 6,7,10 }; const unsigned int r33 = 57;
+			
+			LinkedCoordinate3DwithSevenElementsFixture1()
+			{
+				c = std::make_shared<LinkedCoordinate<3, unsigned int>>();
+				c->set(c11, std::make_shared<unsigned int>(r11));
+				c->set(c_center, std::make_shared<unsigned int>(r_center));
+				c->set(c13, std::make_shared<unsigned int>(r13));
+				c->set(c21, std::make_shared<unsigned int>(r21));
+				c->set(c23, std::make_shared<unsigned int>(r23));
+				c->set(c31, std::make_shared<unsigned int>(r31));
+				c->set(c33, std::make_shared<unsigned int>(r33));
+			}
+			~LinkedCoordinate3DwithSevenElementsFixture1() = default;
+		};
 #pragma endregion
 #pragma endregion
 #pragma region 四维夹具
@@ -111,7 +141,7 @@ namespace vistart
 			* 需要模拟2-维到16-维。
 			* 类型参数 D 必须为常亮，因此不能用循环赋值，只能单独写出每一句，并分别执行。
 			*/
-		BOOST_AUTO_TEST_CASE(TestCoordinateInit)
+			BOOST_AUTO_TEST_CASE(TestCoordinateInit)
 		{
 			const auto seed = time(0);
 			srand(static_cast<unsigned int>(seed));
@@ -180,14 +210,14 @@ namespace vistart
 			/**
 			 * 测试二维坐标。
 			 */
-		BOOST_AUTO_TEST_SUITE(TestCoordinate2D)
+			BOOST_AUTO_TEST_SUITE(TestCoordinate2D)
 			/**
 			 * 测试二维坐标初始化。
 			 * 1. 实例化时不抛出异常。
 			 * 2. 找不到随机生成的坐标值。
 			 * 3. 如果坐标维度与目标空间维度不匹配，则抛出异常 CoordinateDimensionMismatchException。
 			 */
-		BOOST_AUTO_TEST_CASE(TestCoordinate2DInit)
+			BOOST_AUTO_TEST_CASE(TestCoordinate2DInit)
 		{
 			const auto seed = time(0);
 			srand(static_cast<unsigned int>(seed));
@@ -224,15 +254,15 @@ namespace vistart
 		}
 
 		BOOST_AUTO_TEST_CASE(TestCoordinate2DOperatorBracket)
-        {
-            const auto type_length = sizeof(size_t) * 8;
-            const auto dimension_length = type_length / 2;
-            const Coordinate<2, unsigned int>::coordinates_type& c = {1, 2};
+		{
+			const auto type_length = sizeof(size_t) * 8;
+			const auto dimension_length = type_length / 2;
+			const Coordinate<2, unsigned int>::coordinates_type& c = { 1, 2 };
 
-            size_t result = (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
-            Coordinate<2, unsigned int>::Hash h;
-            BOOST_REQUIRE_EQUAL(h.operator()(c), result);
-        }
+			size_t result = (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
+			Coordinate<2, unsigned int>::Hash h;
+			BOOST_REQUIRE_EQUAL(h.operator()(c), result);
+		}
 
 		/**
 		 * 测试二维空间添加坐标元素。
@@ -274,7 +304,7 @@ namespace vistart
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c2, std::make_shared<unsigned int>(r2 + 1)));
 
 			// 添加后取出的值应该与 r3 相等，而不应该与 r4 相等。
-			BOOST_TEST(*r3 != *(o2.c->get(c2)),"在坐标已存在情况下，应该允许设置新值。");
+			BOOST_TEST(*r3 != *(o2.c->get(c2)), "在坐标已存在情况下，应该允许设置新值。");
 			BOOST_TEST(r2 + 1 == *(o2.c->get(c2)), "在坐标已存在情况下，添加新值后，再次取出的应该是新值。");
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c2, std::make_shared<unsigned int>(r2 + 2), false));
 			BOOST_TEST(r2 + 1 == *(o2.c->get(c2)), "在坐标已存在情况下，如果不允许替换，则再次取出的应该是旧值。");
@@ -355,9 +385,9 @@ namespace vistart
 		}
 		BOOST_AUTO_TEST_SUITE_END()
 
-		BOOST_AUTO_TEST_SUITE(TestCoordinate3D)
+			BOOST_AUTO_TEST_SUITE(TestCoordinate3D)
 
-		BOOST_AUTO_TEST_CASE(TestCoordinate3DEqualBeyondDimension)
+			BOOST_AUTO_TEST_CASE(TestCoordinate3DEqualBeyondDimension)
 		{
 			const auto seed = time(0);
 			srand(static_cast<unsigned int>(seed));
@@ -388,24 +418,24 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(r3[2], 0);
 		}
 
-        BOOST_AUTO_TEST_CASE(TestCoordinate3DOperatorBracket)
-        {
-            const auto type_length = sizeof(size_t) * 8;
-            const auto dimension_length = type_length / 3;
-            const Coordinate<3, unsigned int>::coordinates_type& c = {1, 2, 3};
+		BOOST_AUTO_TEST_CASE(TestCoordinate3DOperatorBracket)
+		{
+			const auto type_length = sizeof(size_t) * 8;
+			const auto dimension_length = type_length / 3;
+			const Coordinate<3, unsigned int>::coordinates_type& c = { 1, 2, 3 };
 
-            size_t result = (static_cast<size_t>(c[2]) << 2 * dimension_length) + (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
-            Coordinate<3, unsigned int>::Hash h;
-            BOOST_REQUIRE_EQUAL(h.operator()(c), result);
-        }
+			size_t result = (static_cast<size_t>(c[2]) << 2 * dimension_length) + (static_cast<size_t>(c[1]) << dimension_length) + static_cast<size_t>(c[0]);
+			Coordinate<3, unsigned int>::Hash h;
+			BOOST_REQUIRE_EQUAL(h.operator()(c), result);
+		}
 		BOOST_AUTO_TEST_SUITE_END()
 
-		BOOST_AUTO_TEST_SUITE(TestLinkedCoordinate)
+			BOOST_AUTO_TEST_SUITE(TestLinkedCoordinate)
 
-		/**
-		 * 测试正交链接坐标初始化。
-		 */
-		BOOST_AUTO_TEST_CASE(TestLinkedCoordinateInit)
+			/**
+			 * 测试正交链接坐标初始化。
+			 */
+			BOOST_AUTO_TEST_CASE(TestLinkedCoordinateInit)
 		{
 			const auto seed = time(0);
 			srand(static_cast<unsigned int>(seed));
@@ -515,7 +545,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht0r->second.head->size(), 2);
 			BOOST_REQUIRE_EQUAL((*ht0r->second.head)[0], c2[0]);
 			BOOST_REQUIRE_EQUAL((*ht0r->second.head)[1], c2[1]);
-									
+
 			// 相同坐标添加一个不同的值
 			// 添加时不应该抛出异常
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c2, std::make_shared<unsigned int>(r2 + 1)));
@@ -561,7 +591,7 @@ namespace vistart
 			// 维度 1 头尾指针组。
 			const auto& ht1 = o1.c->__debug_head_and_tail_in_all_dimensions[1];
 			unsigned int r1 = static_cast<unsigned int>(rand());
-			
+
 			// 向坐标中添加一个元素。添加过程中不能抛出异常。
 			BOOST_REQUIRE_NO_THROW(o1.c->set(c1, std::make_shared<unsigned int>(r1)));
 			BOOST_REQUIRE_EQUAL(ht0.size(), 1);
@@ -606,7 +636,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.head, ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 0))->second.head, ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.head);
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 0))->second.tail, ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.tail);
-			
+
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 0))->second.head, ht0.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 0))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 1))->second.head, ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 1))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 0))->second.head, ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c2, 1))->second.tail);
@@ -625,7 +655,7 @@ namespace vistart
 			c1_ht1r_head = ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.head;
 			// 坐标1的维度1尾指针。此时应该指向（5，8）
 			c1_ht1r_tail = ht1.find(Coordinate<2, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.tail;
-			
+
 			BOOST_REQUIRE_EQUAL((*c1_ht0r_head)[0], c1[0]);
 			BOOST_REQUIRE_EQUAL((*c1_ht0r_tail)[0], c1[0]);
 			BOOST_REQUIRE_EQUAL((*c1_ht1r_head)[0], c1[0]);
@@ -687,7 +717,7 @@ namespace vistart
 
 			unsigned int r1 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c1, std::make_shared<unsigned int>(r1)));
-			
+
 			const auto& ht0 = o2.c->__debug_head_and_tail_in_all_dimensions[0];
 			// 维度 0 的大小应当为 1。
 			BOOST_REQUIRE_EQUAL(ht0.size(), 1);
@@ -705,16 +735,16 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht0r->second.tail, nullptr);
 			BOOST_REQUIRE_EQUAL(ht1r->second.head, nullptr);
 			BOOST_REQUIRE_EQUAL(ht1r->second.tail, nullptr);
-			
+
 			BOOST_REQUIRE_EQUAL(o2.c->erase(c1), 0);
-			
+
 			BOOST_REQUIRE_EQUAL(ht0r->second.head, nullptr);
 			BOOST_REQUIRE_EQUAL(ht0r->second.tail, nullptr);
 			BOOST_REQUIRE_EQUAL(ht1r->second.head, nullptr);
 			BOOST_REQUIRE_EQUAL(ht1r->second.tail, nullptr);
-			
+
 			BOOST_REQUIRE_EQUAL(o2.c->erase(c1), 0);
-			
+
 			BOOST_REQUIRE_EQUAL(ht0r->second.head, nullptr);
 			BOOST_REQUIRE_EQUAL(ht0r->second.tail, nullptr);
 			BOOST_REQUIRE_EQUAL(ht1r->second.head, nullptr);
@@ -746,7 +776,7 @@ namespace vistart
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c3, std::make_shared<unsigned int>(r3)));
 			BOOST_REQUIRE_EQUAL(ht0.size(), 2);
 			BOOST_REQUIRE_EQUAL(ht1.size(), 2);
-			
+
 			const std::vector<unsigned int>& c4 = { c1[0] + 1, c1[1] };
 			unsigned int r4 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o2.c->set(c4, std::make_shared<unsigned int>(r4)));
@@ -866,7 +896,7 @@ namespace vistart
 			const auto& ht0 = o1.c->__debug_head_and_tail_in_all_dimensions[0];
 			// 维度 1 头尾指针组。
 			const auto& ht1 = o1.c->__debug_head_and_tail_in_all_dimensions[1];
-			// 维度 1 头尾指针组。
+			// 维度 2 头尾指针组。
 			const auto& ht2 = o1.c->__debug_head_and_tail_in_all_dimensions[2];
 			unsigned int r1 = static_cast<unsigned int>(rand());
 
@@ -938,7 +968,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 0))->second.head, ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 2))->second.head);
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 0))->second.tail, ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 1))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 0))->second.tail, ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c1, 2))->second.tail);
-			
+
 			BOOST_REQUIRE_EQUAL(ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 0))->second.head, ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 0))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 1))->second.head, ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 1))->second.tail);
 			BOOST_REQUIRE_EQUAL(ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 2))->second.head, ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c2, 2))->second.tail);
@@ -994,7 +1024,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*c1_ht0r_tail)[1], c1[1]);
 			BOOST_REQUIRE_EQUAL((*c1_ht0r_head)[2], c1[2]);
 			BOOST_REQUIRE_EQUAL((*c1_ht0r_tail)[2], c1[2]);
-			
+
 			BOOST_REQUIRE_EQUAL((*c2_ht0r_head)[0], c1[0]);
 			BOOST_REQUIRE_EQUAL((*c2_ht0r_tail)[0], c1[0] + 1);
 			BOOST_REQUIRE_EQUAL((*c2_ht0r_head)[1], c1[1] + 1);
@@ -1047,7 +1077,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*c3_ht2r_head)[2], c1[2] + 1);
 			BOOST_REQUIRE_EQUAL((*c3_ht2r_tail)[2], c1[2] + 1);
 			BOOST_REQUIRE_EQUAL(c1_ht2r_head, c1_ht2r_tail);
-			
+
 			const std::vector<unsigned int>& c4 = { c1[0] + 1, c1[1], c1[2] + 1 };
 			unsigned int r4 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o1.c->set(c4, std::make_shared<unsigned int>(r4)));
@@ -1070,21 +1100,21 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht0.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht1.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht2.size(), 4);
-			
+
 			const std::vector<unsigned int>& c6 = { c1[0], c1[1], c1[2] + 1 };
 			unsigned int r6 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o1.c->set(c6, std::make_shared<unsigned int>(r6)));
 			BOOST_REQUIRE_EQUAL(ht0.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht1.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht2.size(), 4);
-			
+
 			const std::vector<unsigned int>& c7 = { c1[0] + 1, c1[1], c1[2] };
 			unsigned int r7 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o1.c->set(c7, std::make_shared<unsigned int>(r7)));
 			BOOST_REQUIRE_EQUAL(ht0.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht1.size(), 4);
 			BOOST_REQUIRE_EQUAL(ht2.size(), 4);
-			
+
 			const std::vector<unsigned int>& c8 = { c1[0], c1[1] + 1, c1[2] };
 			unsigned int r8 = (unsigned int)rand();
 			BOOST_REQUIRE_NO_THROW(o1.c->set(c8, std::make_shared<unsigned int>(r8)));
@@ -1093,17 +1123,1034 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL(ht2.size(), 4);
 		}
 
-		/**
-		 * 测试三维正交链接坐标批量添加元素。
-		 */
-		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DAddBatch)
+		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DIsFirstOrLastInDimension)
 		{
+			LinkedCoordinate3DFixture o1;
+			
+			const unsigned int c_x = 5;
+			const unsigned int c_y = 7;
+			const unsigned int c_z = 9;
+			unsigned int size = 10;
+			std::vector<unsigned int> c0 = { c_x, c_y, c_z };
+			std::vector<unsigned int> c1 = { c_x, c_y, c_z + 1 };
+			std::vector<unsigned int> c2 = { c_x, c_y, c_z + 2 };
 
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 0), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 0), false);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 1), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 1), false);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 2), false);
+
+			BOOST_REQUIRE_NO_THROW(o1.c->set(c0, std::make_shared<unsigned int>(17)));
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 0), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 0), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 1), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 1), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 2), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 2), true);
+
+			BOOST_REQUIRE_NO_THROW(o1.c->set(c1, std::make_shared<unsigned int>(18)));
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 0), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 0), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 1), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 1), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 2), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c1, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c1, 2), true);
+
+			BOOST_REQUIRE_NO_THROW(o1.c->set(c2, std::make_shared<unsigned int>(19)));
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 0), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 0), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 1), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 1), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 2), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c1, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c1, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c2, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c2, 2), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c1), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 0), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 0), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 1), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 1), true);
+
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c0, 2), true);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c0, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c1, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c1, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_first_in_dimension(c2, 2), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_is_last_in_dimension(c2, 2), true);
 		}
 
-		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DRemove)
+		/**
+		 * 测试三维正交链接坐标在单维度方向上批量添加元素。
+		 */
+		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DAddBatchInSingleDimension)
 		{
+			LinkedCoordinate3DFixture o1;
+			// 在没有添加内容前，应该找不到。
+
+			// 声明一个坐标组，有10个坐标，前两个维度固定，第三个维度间隔1。
+			std::vector<std::vector<unsigned int>> c;
+
+			// y-z 面头尾指针组。因为此处测试的是二维坐标，故头尾指针组应该是一维数据。但为了普适处理，头尾指针组坐标依然与坐标保持相同维度，而当前维度全部置零，下同。
+			const auto& ht0 = o1.c->__debug_head_and_tail_in_all_dimensions[0];
+			// x-z 面头尾指针组。
+			const auto& ht1 = o1.c->__debug_head_and_tail_in_all_dimensions[1];
+			// x-y 面头尾指针组。
+			const auto& ht2 = o1.c->__debug_head_and_tail_in_all_dimensions[2];
+
+			const unsigned int c_x = 5;
+			const unsigned int c_y = 7;
+			const unsigned int c_z = 9;
 			
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				std::vector<unsigned int> c0 = { c_x, c_y, i + c_z };
+				c.push_back(c0);
+				// 添加的过程不能抛出异常
+				// 添加的元素内容是当前序号 i。
+				BOOST_REQUIRE_EQUAL(o1.c->get(c0), nullptr);
+				BOOST_REQUIRE_NO_THROW(o1.c->set(c0, std::make_shared<unsigned int>(i)));
+				const auto rt = o1.c->get(c0);
+				// 添加后应该找得到。
+				BOOST_REQUIRE_NE(rt, nullptr);
+				// 取出的值应该与原值相等。
+				BOOST_REQUIRE_EQUAL(*rt, i);
+
+				unsigned int size = i + 1;
+				BOOST_REQUIRE_EQUAL(ht0.size(), size);
+				BOOST_REQUIRE_EQUAL(ht1.size(), size);
+				BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+				
+				// 当前坐标的y-z面头指针
+				auto c0_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 0))->second.head;
+				// 当前坐标的y-z面尾指针
+				auto c0_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 0))->second.tail;
+				// 当前坐标的x-z面头指针
+				auto c0_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 1))->second.head;
+				// 当前坐标的x-z面尾指针
+				auto c0_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 1))->second.tail;
+				// 当前坐标的x-y面头指针
+				auto c0_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 2))->second.head;
+				// 当前坐标的x-y面尾指针
+				auto c0_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 2))->second.tail;
+
+				// 每添加一个新元素判断每个头尾指针是否指向正确的元素坐标。
+				// 每添加一个元素判断y-z面头尾指针是否指向当前元素坐标
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_head)[0], c0[0]);
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_tail)[0], c0[0]);
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_head)[1], c0[1]);
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_tail)[1], c0[1]);
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_head)[2], c0[2]);
+				BOOST_REQUIRE_EQUAL((*c0_ht0r_tail)[2], c0[2]);
+				// 每添加一个元素判断x-z面头尾指针是否指向当前元素坐标
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_head)[0], c0[0]);
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_tail)[0], c0[0]);
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_head)[1], c0[1]);
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_tail)[1], c0[1]);
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_head)[2], c0[2]);
+				BOOST_REQUIRE_EQUAL((*c0_ht1r_tail)[2], c0[2]);
+				// 每添加一个元素判断x-y面头指针指向第一个元素，尾指针指向最后一个元素
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[0], c_x);
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[0], c0[0]);
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[1], c_y);
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[1], c0[1]);
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[2], c_z);
+				BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[2], c0[2]);
+			}
+
+			// 测试维度 2 前后关系。
+			// 测试第 1 个元素。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z }), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z }), true);
+			const auto o1c0adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z });
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[2].prev, nullptr);
+			const auto o1c0d2next = (*o1c0adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[2], c_z + 1);
+
+			// 测试第 2 到第 9 个元素。
+			for(int i=1;i<9;i++)
+			{
+				BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z+i }), nullptr);
+				BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z +i}), true);
+				const auto o1ciadj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z+i });
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[0].prev, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[0].next, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[1].prev, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[1].next, nullptr);
+				const auto o1cid2prev = (*o1ciadj_ptr)[2].prev;
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[0], c_x);
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[1], c_y);
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[2], c_z +i-1);
+				const auto o1cid2next = (*o1ciadj_ptr)[2].next;
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[0], c_x);
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[1], c_y);
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[2], c_z + i+1);
+			}
+			
+			// 测试第 10 个元素。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z +9}), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z +9}), true);
+			const auto o1c9adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z +9});
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[2].next, nullptr);
+			const auto o1c9d2prev = (*o1c9adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[2], c_z + 8);
+		}
+
+		/**
+		 * 测试三维正交链接坐标在单维度方向上批量删除元素。
+		 */
+		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DRemoveInSingleDimension)
+		{
+			LinkedCoordinate3DFixture o1;
+			std::vector<std::vector<unsigned int>> c;
+			// y-z 面头尾指针组。因为此处测试的是二维坐标，故头尾指针组应该是一维数据。但为了普适处理，头尾指针组坐标依然与坐标保持相同维度，而当前维度全部置零，下同。
+			const auto& ht0 = o1.c->__debug_head_and_tail_in_all_dimensions[0];
+			// x-z 面头尾指针组。
+			const auto& ht1 = o1.c->__debug_head_and_tail_in_all_dimensions[1];
+			// x-y 面头尾指针组。
+			const auto& ht2 = o1.c->__debug_head_and_tail_in_all_dimensions[2];
+
+			const unsigned int c_x = 5;
+			const unsigned int c_y = 7;
+			const unsigned int c_z = 9;
+			unsigned int size = 10;
+			std::vector<unsigned int> c0 = { c_x, c_y, c_z };
+			std::vector<unsigned int> c9 = { c_x, c_y, c_z + size - 1 };
+			std::vector<unsigned int> c5 = { c_x, c_y, c_z + 5 };
+			for(unsigned int i = 0; i < size; i++)
+			{
+				std::vector<unsigned int> ci = { c_x, c_y, i + c_z };
+				// 添加的过程不能抛出异常
+				// 添加的元素内容是当前序号 i。
+				BOOST_REQUIRE_EQUAL(o1.c->get(ci), nullptr);
+				BOOST_REQUIRE_NO_THROW(o1.c->set(ci, std::make_shared<unsigned int>(i)));
+			}
+			// 删第 1 个。
+			BOOST_REQUIRE_NE(o1.c->get(c0), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c0), true);
+			const auto o1c0adj_ptr = o1.c->__debug_get_adjacents(c0);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c0adj_ptr)[2].prev, nullptr);
+			const auto o1c0d2next = (*o1c0adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c0d2next)[2], c_z + 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c0), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c0), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c0), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c0), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+			
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c0), 0);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c0), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c0), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c0), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+			
+			// 当前坐标的y-z面头指针
+			auto c0_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 0))->second.head;
+			// 当前坐标的y-z面尾指针
+			auto c0_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 0))->second.tail;
+			// 当前坐标的x-z面头指针
+			auto c0_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 1))->second.head;
+			// 当前坐标的x-z面尾指针
+			auto c0_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 1))->second.tail;
+			// 当前坐标的x-y面头指针
+			auto c0_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 2))->second.head;
+			// 当前坐标的x-y面尾指针
+			auto c0_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c0, 2))->second.tail;
+
+			BOOST_REQUIRE_EQUAL(c0_ht0r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c0_ht0r_tail, nullptr);
+			BOOST_REQUIRE_EQUAL(c0_ht1r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c0_ht1r_tail, nullptr);
+			BOOST_REQUIRE_NE(c0_ht2r_head, nullptr);
+			BOOST_REQUIRE_NE(c0_ht2r_tail, nullptr);
+
+			// 每添加一个元素判断x-y面头指针指向第一个元素，尾指针指向最后一个元素
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[0], c0[0]);
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[1], c0[1]);
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_head)[2], c_z + 1);
+			BOOST_REQUIRE_EQUAL((*c0_ht2r_tail)[2], c_z + size - 1);
+
+			// 删最后一个。
+			BOOST_REQUIRE_NE(o1.c->get(c9), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c9), true);
+			const auto o1c9adj_ptr = o1.c->__debug_get_adjacents(c9);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c9adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_NE((*o1c9adj_ptr)[2].prev, nullptr);
+			const auto o1c9d2prev = (*o1c9adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c9d2prev)[2], c_z +size-2);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c9), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c9), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c9), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c9), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c9), 0);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c9), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c9), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c9), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+
+			// 当前坐标的y-z面头指针
+			auto c9_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 0))->second.head;
+			// 当前坐标的y-z面尾指针
+			auto c9_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 0))->second.tail;
+			// 当前坐标的x-z面头指针
+			auto c9_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 1))->second.head;
+			// 当前坐标的x-z面尾指针
+			auto c9_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 1))->second.tail;
+			// 当前坐标的x-y面头指针
+			auto c9_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 2))->second.head;
+			// 当前坐标的x-y面尾指针
+			auto c9_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 2))->second.tail;
+
+			BOOST_REQUIRE_EQUAL(c9_ht0r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c9_ht0r_tail, nullptr);
+			BOOST_REQUIRE_EQUAL(c9_ht1r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c9_ht1r_tail, nullptr);
+			BOOST_REQUIRE_NE(c9_ht2r_head, nullptr);
+			BOOST_REQUIRE_NE(c9_ht2r_tail, nullptr);
+
+			// 每添加一个元素判断x-y面头指针指向第一个元素，尾指针指向最后一个元素
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_head)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_tail)[0], c9[0]);
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_head)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_tail)[1], c9[1]);
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_head)[2], c_z +1);
+			BOOST_REQUIRE_EQUAL((*c9_ht2r_tail)[2], c_z + size - 2);
+
+			// 删中间一个。
+			BOOST_REQUIRE_NE(o1.c->get(c5), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c5), true);
+			const auto o1c5adj_ptr = o1.c->__debug_get_adjacents(c5);
+			BOOST_REQUIRE_EQUAL((*o1c5adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c5adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c5adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c5adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_NE((*o1c5adj_ptr)[2].prev, nullptr);
+			const auto o1c5d2prev = (*o1c5adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c5d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c5d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c5d2prev)[2], c_z + 4);
+			const auto o1c5d2next = (*o1c5adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c5d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c5d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c5d2next)[2], c_z + 6);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c5), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c5), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c5), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c5), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c5), 0);
+
+			BOOST_REQUIRE_EQUAL(o1.c->get(c5), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c5), false);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_get_adjacents(c5), nullptr);
+
+			BOOST_REQUIRE_EQUAL(ht0.size(), size);
+			BOOST_REQUIRE_EQUAL(ht1.size(), size);
+			BOOST_REQUIRE_EQUAL(ht2.size(), 1);
+
+			// 当前坐标的y-z面头指针
+			auto c5_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 0))->second.head;
+			// 当前坐标的y-z面尾指针
+			auto c5_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 0))->second.tail;
+			// 当前坐标的x-z面头指针
+			auto c5_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 1))->second.head;
+			// 当前坐标的x-z面尾指针
+			auto c5_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 1))->second.tail;
+			// 当前坐标的x-y面头指针
+			auto c5_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 2))->second.head;
+			// 当前坐标的x-y面尾指针
+			auto c5_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c9, 2))->second.tail;
+
+			BOOST_REQUIRE_EQUAL(c5_ht0r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c5_ht0r_tail, nullptr);
+			BOOST_REQUIRE_EQUAL(c5_ht1r_head, nullptr);
+			BOOST_REQUIRE_EQUAL(c5_ht1r_tail, nullptr);
+			BOOST_REQUIRE_NE(c5_ht2r_head, nullptr);
+			BOOST_REQUIRE_NE(c5_ht2r_tail, nullptr);
+
+			// 每添加一个元素判断x-y面头指针指向第一个元素，尾指针指向最后一个元素
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_head)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_tail)[0], c5[0]);
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_head)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_tail)[1], c5[1]);
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_head)[2], c_z + 1);
+			BOOST_REQUIRE_EQUAL((*c5_ht2r_tail)[2], c_z + size - 2);
+
+			// 测试连续性
+			// 测试第 1 个元素：5,7,10。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z +1}), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z +1}), true);
+			const auto o1c00adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z+1 });
+			BOOST_REQUIRE_EQUAL((*o1c00adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c00adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c00adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c00adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c00adj_ptr)[2].prev, nullptr);
+			const auto o1c00d2next = (*o1c00adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c00d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c00d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c00d2next)[2], c_z + 2);
+
+			// 测试第 2 到第 3 个元素：5,7,11;5,7,12。
+			for (int i = 1; i < 3; i++)
+			{
+				BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z +1+ i }), nullptr);
+				BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z +1+ i }), true);
+				const auto o1ciadj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z+1 + i });
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[0].prev, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[0].next, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[1].prev, nullptr);
+				BOOST_REQUIRE_EQUAL((*o1ciadj_ptr)[1].next, nullptr);
+				const auto o1cid2prev = (*o1ciadj_ptr)[2].prev;
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[0], c_x);
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[1], c_y);
+				BOOST_REQUIRE_EQUAL((*o1cid2prev)[2], c_z + i );
+				const auto o1cid2next = (*o1ciadj_ptr)[2].next;
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[0], c_x);
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[1], c_y);
+				BOOST_REQUIRE_EQUAL((*o1cid2next)[2], c_z + i + 2);
+			}
+
+			// 测试第 4 个元素：5,7,13。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z + 4 }), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z + 4 }), true);
+			const auto o1c3adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z + 4 });
+			BOOST_REQUIRE_EQUAL((*o1c3adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c3adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c3adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c3adj_ptr)[1].next, nullptr);
+			const auto o1c3d2prev = (*o1c3adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c3d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c3d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c3d2prev)[2], c_z + 3);
+			const auto o1c3d2next = (*o1c3adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c3d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c3d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c3d2next)[2], c_z + 6);
+			
+			// 测试第 5 个元素：5,7,15。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z + 6 }), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z + 6}), true);
+			const auto o1c4adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z + 6 });
+			BOOST_REQUIRE_EQUAL((*o1c4adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c4adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c4adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c4adj_ptr)[1].next, nullptr);
+			const auto o1c4d2prev = (*o1c4adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c4d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c4d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c4d2prev)[2], c_z + 4);
+			const auto o1c4d2next = (*o1c4adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c4d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c4d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c4d2next)[2], c_z + 7);
+
+			// 测试第 6 个元素：5,7,16。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z + 7 }), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z + 7 }), true);
+			const auto o1c55adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z + 7 });
+			BOOST_REQUIRE_EQUAL((*o1c55adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c55adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c55adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c55adj_ptr)[1].next, nullptr);
+			const auto o1c55d2prev = (*o1c55adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c55d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c55d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c55d2prev)[2], c_z + 6);
+			const auto o1c55d2next = (*o1c55adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c55d2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c55d2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c55d2next)[2], c_z + 8);
+
+			// 测试第 7 个元素：5,7,17。
+			BOOST_REQUIRE_NE(o1.c->get({ c_x, c_y, c_z + 8 }), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists({ c_x, c_y, c_z + 8 }), true);
+			const auto o1c6adj_ptr = o1.c->__debug_get_adjacents({ c_x, c_y, c_z + 8 });
+			BOOST_REQUIRE_EQUAL((*o1c6adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c6adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c6adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c6adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c6adj_ptr)[2].next, nullptr);
+			const auto o1c6d2prev = (*o1c6adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c6d2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c6d2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c6d2prev)[2], c_z + 7);
+		}
+
+		/**
+		 * 测试三维正交链接坐标在多维度方向上批量添加元素。
+		 */
+		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DAddBatchInMultipleDimensions)
+		{
+			LinkedCoordinate3DwithSevenElementsFixture1 o1;
+			const auto c11 = o1.c11;
+			const auto c13 = o1.c13;
+			const auto c21 = o1.c21;
+			const auto c23 = o1.c23;
+			const auto c31 = o1.c31;
+			const auto c33 = o1.c33;
+			const auto c_center = o1.c_center;
+			const auto c_x = o1.c_x;
+			const auto c_y = o1.c_y;
+			const auto c_z = o1.c_z;
+
+			// y-z 面头尾指针组。因为此处测试的是二维坐标，故头尾指针组应该是一维数据。但为了普适处理，头尾指针组坐标依然与坐标保持相同维度，而当前维度全部置零，下同。
+			const auto& ht0 = o1.c->__debug_head_and_tail_in_all_dimensions[0];
+			// x-z 面头尾指针组。
+			const auto& ht1 = o1.c->__debug_head_and_tail_in_all_dimensions[1];
+			// x-y 面头尾指针组。
+			const auto& ht2 = o1.c->__debug_head_and_tail_in_all_dimensions[2];
+
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail
+			// 测试头尾节点
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c11
+			//     测试 c11(5, 7, 9) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto c11_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto c11_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto c11_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto c11_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto c11_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto c11_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c11, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c11_ht0r_head)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c11_ht0r_head)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c11_ht0r_head)[2], c11[2]);
+			BOOST_CHECK_EQUAL((*c11_ht0r_tail)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c11_ht0r_tail)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c11_ht0r_tail)[2], c13[2]);
+
+			BOOST_CHECK_EQUAL((*c11_ht1r_head)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c11_ht1r_head)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c11_ht1r_head)[2], c11[2]);
+			BOOST_CHECK_EQUAL((*c11_ht1r_tail)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c11_ht1r_tail)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c11_ht1r_tail)[2], c11[2]);
+
+			BOOST_CHECK_EQUAL((*c11_ht2r_head)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c11_ht2r_head)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c11_ht2r_head)[2], c11[2]);
+			BOOST_CHECK_EQUAL((*c11_ht2r_tail)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c11_ht2r_tail)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c11_ht2r_tail)[2], c11[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c_center
+			//     测试 c_center=(6, 7, 9) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c_center_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c_center_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c_center_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c_center_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c_center_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c_center_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c_center, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c_center_ht0r_head)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht0r_head)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht0r_head)[2], c11[2]);
+			BOOST_CHECK_EQUAL((*c_center_ht0r_tail)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht0r_tail)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht0r_tail)[2], c13[2]);
+
+			BOOST_CHECK_EQUAL((*c_center_ht1r_head)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht1r_head)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht1r_head)[2], c21[2]);
+			BOOST_CHECK_EQUAL((*c_center_ht1r_tail)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht1r_tail)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht1r_tail)[2], c23[2]);
+
+			BOOST_CHECK_EQUAL((*c_center_ht2r_head)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht2r_head)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht2r_head)[2], c31[2]);
+			BOOST_CHECK_EQUAL((*c_center_ht2r_tail)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c_center_ht2r_tail)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c_center_ht2r_tail)[2], c33[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c11
+			//     测试 c13=(7, 7, 9) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c13_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c13_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c13_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c13_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c13_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c13_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c13, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c13_ht0r_head)[0], c11[0]);
+			BOOST_CHECK_EQUAL((*c13_ht0r_head)[1], c11[1]);
+			BOOST_CHECK_EQUAL((*c13_ht0r_head)[2], c11[2]);
+			BOOST_CHECK_EQUAL((*c13_ht0r_tail)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c13_ht0r_tail)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c13_ht0r_tail)[2], c13[2]);
+
+			BOOST_CHECK_EQUAL((*c13_ht1r_head)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c13_ht1r_head)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c13_ht1r_head)[2], c13[2]);
+			BOOST_CHECK_EQUAL((*c13_ht1r_tail)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c13_ht1r_tail)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c13_ht1r_tail)[2], c13[2]);
+
+			BOOST_CHECK_EQUAL((*c13_ht2r_head)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c13_ht2r_head)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c13_ht2r_head)[2], c13[2]);
+			BOOST_CHECK_EQUAL((*c13_ht2r_tail)[0], c13[0]);
+			BOOST_CHECK_EQUAL((*c13_ht2r_tail)[1], c13[1]);
+			BOOST_CHECK_EQUAL((*c13_ht2r_tail)[2], c13[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c21
+			//     测试 c21=(6, 6, 9) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c21_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c21_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c21_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c21_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c21_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c21_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c21, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c21_ht0r_head)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c21_ht0r_head)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c21_ht0r_head)[2], c21[2]);
+			BOOST_CHECK_EQUAL((*c21_ht0r_tail)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c21_ht0r_tail)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c21_ht0r_tail)[2], c21[2]);
+
+			BOOST_CHECK_EQUAL((*c21_ht1r_head)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c21_ht1r_head)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c21_ht1r_head)[2], c21[2]);
+			BOOST_CHECK_EQUAL((*c21_ht1r_tail)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c21_ht1r_tail)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c21_ht1r_tail)[2], c23[2]);
+
+			BOOST_CHECK_EQUAL((*c21_ht2r_head)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c21_ht2r_head)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c21_ht2r_head)[2], c21[2]);
+			BOOST_CHECK_EQUAL((*c21_ht2r_tail)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c21_ht2r_tail)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c21_ht2r_tail)[2], c21[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c23
+			//     测试 c23=(6, 8, 9) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c23_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c23_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c23_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c23_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c23_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c23_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c23, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c23_ht0r_head)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c23_ht0r_head)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c23_ht0r_head)[2], c23[2]);
+			BOOST_CHECK_EQUAL((*c23_ht0r_tail)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c23_ht0r_tail)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c23_ht0r_tail)[2], c23[2]);
+
+			BOOST_CHECK_EQUAL((*c23_ht1r_head)[0], c21[0]);
+			BOOST_CHECK_EQUAL((*c23_ht1r_head)[1], c21[1]);
+			BOOST_CHECK_EQUAL((*c23_ht1r_head)[2], c21[2]);
+			BOOST_CHECK_EQUAL((*c23_ht1r_tail)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c23_ht1r_tail)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c23_ht1r_tail)[2], c23[2]);
+
+			BOOST_CHECK_EQUAL((*c23_ht2r_head)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c23_ht2r_head)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c23_ht2r_head)[2], c23[2]);
+			BOOST_CHECK_EQUAL((*c23_ht2r_tail)[0], c23[0]);
+			BOOST_CHECK_EQUAL((*c23_ht2r_tail)[1], c23[1]);
+			BOOST_CHECK_EQUAL((*c23_ht2r_tail)[2], c23[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c31
+			//     测试 c31=(6, 7, 8) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c31_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c31_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c31_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c31_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c31_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c31_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c31, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c31_ht0r_head)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c31_ht0r_head)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c31_ht0r_head)[2], c31[2]);
+			BOOST_CHECK_EQUAL((*c31_ht0r_tail)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c31_ht0r_tail)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c31_ht0r_tail)[2], c31[2]);
+
+			BOOST_CHECK_EQUAL((*c31_ht1r_head)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c31_ht1r_head)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c31_ht1r_head)[2], c31[2]);
+			BOOST_CHECK_EQUAL((*c31_ht1r_tail)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c31_ht1r_tail)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c31_ht1r_tail)[2], c31[2]);
+
+			BOOST_CHECK_EQUAL((*c31_ht2r_head)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c31_ht2r_head)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c31_ht2r_head)[2], c31[2]);
+			BOOST_CHECK_EQUAL((*c31_ht2r_tail)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c31_ht2r_tail)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c31_ht2r_tail)[2], c33[2]);
+#pragma endregion
+#pragma region 测试_LinkedCoordinate_3D_Add_Batch_In_Double_Dimensions__Head_and_Tail_c33
+			//     测试 c33=(6, 7, 10) 的相关头尾节点。
+
+			//         当前坐标的y-z面头指针
+			auto  c33_ht0r_head = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 0))->second.head;
+			//         当前坐标的y-z面尾指针
+			auto  c33_ht0r_tail = ht0.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 0))->second.tail;
+			//         当前坐标的x-z面头指针
+			auto  c33_ht1r_head = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 1))->second.head;
+			//         当前坐标的x-z面尾指针
+			auto  c33_ht1r_tail = ht1.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 1))->second.tail;
+			//         当前坐标的x-y面头指针
+			auto  c33_ht2r_head = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 2))->second.head;
+			//         当前坐标的x-y面尾指针
+			auto  c33_ht2r_tail = ht2.find(Coordinate<3, unsigned int>::coordinates_beyond_dimension(c33, 2))->second.tail;
+
+			BOOST_CHECK_EQUAL((*c33_ht0r_head)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c33_ht0r_head)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c33_ht0r_head)[2], c33[2]);
+			BOOST_CHECK_EQUAL((*c33_ht0r_tail)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c33_ht0r_tail)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c33_ht0r_tail)[2], c33[2]);
+
+			BOOST_CHECK_EQUAL((*c33_ht1r_head)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c33_ht1r_head)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c33_ht1r_head)[2], c33[2]);
+			BOOST_CHECK_EQUAL((*c33_ht1r_tail)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c33_ht1r_tail)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c33_ht1r_tail)[2], c33[2]);
+
+			BOOST_CHECK_EQUAL((*c33_ht2r_head)[0], c31[0]);
+			BOOST_CHECK_EQUAL((*c33_ht2r_head)[1], c31[1]);
+			BOOST_CHECK_EQUAL((*c33_ht2r_head)[2], c31[2]);
+			BOOST_CHECK_EQUAL((*c33_ht2r_tail)[0], c33[0]);
+			BOOST_CHECK_EQUAL((*c33_ht2r_tail)[1], c33[1]);
+			BOOST_CHECK_EQUAL((*c33_ht2r_tail)[2], c33[2]);
+#pragma endregion
+#pragma endregion
+
+			// 测试连续性
+
+			// c11 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c11), true);
+			const auto o1c11adj_ptr = o1.c->__debug_get_adjacents(c11);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c11adj_ptr)[0].next, nullptr);
+			const auto o1c11d0next = (*o1c11adj_ptr)[0].next;
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[2], c_z);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[2].next, nullptr);
+
+			// c_center 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c_center), true);
+			const auto o1c_centeradj_ptr = o1.c->__debug_get_adjacents(c_center);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[0].next, nullptr);
+			const auto o1c_centerd0prev = (*o1c_centeradj_ptr)[0].prev;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0prev)[0], c_x-1);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0prev)[2], c_z);
+			const auto o1c_centerd0next = (*o1c_centeradj_ptr)[0].next;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0next)[0], c_x+1);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd0next)[2], c_z);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[1].next, nullptr);
+			const auto o1c_centerd1prev = (*o1c_centeradj_ptr)[1].prev;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1prev)[1], c_y-1);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1prev)[2], c_z);
+			const auto o1c_centerd1next = (*o1c_centeradj_ptr)[1].next;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1next)[0], c_x );
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1next)[1], c_y+1);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd1next)[2], c_z);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c_centeradj_ptr)[2].next, nullptr);
+			const auto o1c_centerd2prev = (*o1c_centeradj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2prev)[2], c_z-1);
+			const auto o1c_centerd2next = (*o1c_centeradj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c_centerd2next)[2], c_z+1);
+
+			// c13 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c13), true);
+			const auto o1c13adj_ptr = o1.c->__debug_get_adjacents(c13);
+			BOOST_REQUIRE_NE((*o1c13adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[0].next, nullptr);
+			const auto o1c13d0prev = (*o1c13adj_ptr)[0].prev;
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[2], c_z);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[2].next, nullptr);
+
+			// c21 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c21), true);
+			const auto o1c21adj_ptr = o1.c->__debug_get_adjacents(c21);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c21adj_ptr)[1].next, nullptr);
+			const auto o1c21d1next = (*o1c21adj_ptr)[1].next;
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[2], c_z);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[2].next, nullptr);
+
+			// c23 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c23), true);
+			const auto o1c23adj_ptr = o1.c->__debug_get_adjacents(c23);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_NE((*o1c23adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[1].next, nullptr);
+			const auto o1c23d1prev = (*o1c23adj_ptr)[1].prev;
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[2], c_z);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[2].next, nullptr);
+
+			// c31 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c31), true);
+			const auto o1c31adj_ptr = o1.c->__debug_get_adjacents(c31);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_NE((*o1c31adj_ptr)[2].next, nullptr);
+			const auto o1c31d1next = (*o1c31adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[2], c_z);
+
+			// c33 连续性
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c33), true);
+			const auto o1c33adj_ptr = o1.c->__debug_get_adjacents(c33);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_NE((*o1c33adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[2].next, nullptr);
+			const auto o1c33d1prev = (*o1c33adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[0], c_x);
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[1], c_y);
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c_z);
+		}
+
+		/**
+		 * 测试三维正交链接坐标在多维度方向上批量删除元素。
+		 */
+		BOOST_AUTO_TEST_CASE(TestLinkedCoordinate3DRemoveInMultipleDimensions)
+		{
+			LinkedCoordinate3DwithSevenElementsFixture1 o1;
+			const auto c11 = o1.c11;
+			const auto c13 = o1.c13;
+			const auto c21 = o1.c21;
+			const auto c23 = o1.c23;
+			const auto c31 = o1.c31;
+			const auto c33 = o1.c33;
+			const auto c_center = o1.c_center;
+			const auto c_x = o1.c_x;
+			const auto c_y = o1.c_y;
+			const auto c_z = o1.c_z;
+
+			BOOST_REQUIRE_EQUAL(o1.c->erase(c_center), 1);
+		    // 验证 c11 在维度 0 的前驱为空，后继为 c13，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c11), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c11), true);
+			const auto o1c11adj_ptr = o1.c->__debug_get_adjacents(c11);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[0].prev, nullptr);
+			const auto o1c11d0next = (*o1c11adj_ptr)[0].next;
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[0], c13[0]);
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[1], c13[1]);
+			BOOST_REQUIRE_EQUAL((*o1c11d0next)[2], c13[2]);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c11adj_ptr)[2].next, nullptr);
+			// 验证 c13 在维度 0 的前驱为c11，后继为空，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c13), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c13), true);
+			const auto o1c13adj_ptr = o1.c->__debug_get_adjacents(c13);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[0].next, nullptr);
+			const auto o1c13d0prev = (*o1c13adj_ptr)[0].prev;
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[0], c11[0]);
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[1], c11[1]);
+			BOOST_REQUIRE_EQUAL((*o1c13d0prev)[2], c11[2]);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c13adj_ptr)[2].next, nullptr);
+			// 验证 c21 在维度 1 的前驱为空，后继为c23，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c21), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c21), true);
+			const auto o1c21adj_ptr = o1.c->__debug_get_adjacents(c21);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[1].prev, nullptr);
+			const auto o1c21d1next = (*o1c21adj_ptr)[1].next;
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[0], c23[0]);
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[1], c23[1]);
+			BOOST_REQUIRE_EQUAL((*o1c21d1next)[2], c23[2]);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c21adj_ptr)[2].next, nullptr);
+			// 验证 c23在维度 1 的前驱为c21，后继为空，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c23), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c23), true);
+			const auto o1c23adj_ptr = o1.c->__debug_get_adjacents(c23);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[1].next, nullptr);
+			const auto o1c23d1prev = (*o1c23adj_ptr)[1].prev;
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[0], c21[0]);
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[1], c21[1]);
+			BOOST_REQUIRE_EQUAL((*o1c23d1prev)[2], c21[2]);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[2].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c23adj_ptr)[2].next, nullptr);
+			// 验证 c31在维度 2 的前驱为空，后继为c33，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c31), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c31), true);
+			const auto o1c31adj_ptr = o1.c->__debug_get_adjacents(c31);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c31adj_ptr)[2].prev, nullptr);
+			const auto o1c31d1next = (*o1c31adj_ptr)[2].next;
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[0], c33[0]);
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[1], c33[1]);
+			BOOST_REQUIRE_EQUAL((*o1c31d1next)[2], c33[2]);
+			// 验证 c33在维度 2 的前驱为c31，后继为空，其它维度的前驱后继均为空。
+			BOOST_REQUIRE_NE(o1.c->get(c33), nullptr);
+			BOOST_REQUIRE_EQUAL(o1.c->__debug_adjacent_exists(c33), true);
+			const auto o1c33adj_ptr = o1.c->__debug_get_adjacents(c33);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[0].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[0].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[1].next, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[1].prev, nullptr);
+			BOOST_REQUIRE_EQUAL((*o1c33adj_ptr)[2].next, nullptr);
+			const auto o1c33d1prev = (*o1c33adj_ptr)[2].prev;
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[0], c31[0]);
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[1], c31[1]);
+			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
 		BOOST_AUTO_TEST_SUITE_END()
 

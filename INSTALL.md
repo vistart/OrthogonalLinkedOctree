@@ -28,6 +28,8 @@
   - make
   - zip
   - pkg-config
+  - python3
+  - python3-dev
 - CLion 2020.3
 
 > Ubuntu 16.04 的环境准备请参照[此文档](INSTALL_UBUNTU1604.md)。
@@ -65,6 +67,8 @@ $ vcpkg/bootstrap-vcpkg.sh
 ```
 $ vcpkg/bootstrap-vcpkg.sh -useSystemBinaries
 ```
+
+> 注意：Ubuntu 18.04 下 cmake 的默认版本为 3.10.2，未达到 vcpkg 要求的 3.14 的最低版本要求。
 
 然后执行安装 `boost` 和 `pybind` 命令：
 ```
