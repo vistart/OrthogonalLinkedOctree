@@ -12,6 +12,7 @@
 #define __NODE_COORDINATE_H__
 
 #include <ostream>
+#include <cmath>
 
 namespace vistart
 {
@@ -20,6 +21,10 @@ namespace vistart
         class NodeCoordinate {
         public:
             NodeCoordinate(unsigned int X, unsigned int Y, unsigned int Z, unsigned char depth) : X(X), Y(Y), Z(Z), depth(depth)
+            {
+            }
+
+            NodeCoordinate(double X, double Y, double Z, unsigned char depth): X(round(X)), Y(round(Y)), Z(round(Z)), depth(depth)
             {
             }
 

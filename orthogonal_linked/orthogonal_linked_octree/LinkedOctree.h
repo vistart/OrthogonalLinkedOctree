@@ -13,7 +13,6 @@
 #include <type_traits>
 
 #include "../../file_format/point_cloud_base_presentation/PointList.h"
-#include "../../file_format/plyfile/PlyVertex.h"
 #include "../orthogonal_linked_list/Coordinate.h"
 #include "../orthogonal_linked_list/LinkedCoordinate.h"
 #include "OctreeNode.h"
