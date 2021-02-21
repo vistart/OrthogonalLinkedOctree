@@ -8,7 +8,7 @@
  * @license https://vistart.me/license/
 */
 
-#define BOOST_TEST_MODULE Test
+#define BOOST_TEST_MODULE TestCoordinate
 #include <boost/test/included/unit_test.hpp>
 
 #include "Coordinate.h"

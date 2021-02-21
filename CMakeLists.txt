@@ -30,6 +30,7 @@ include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_o
 # 引用所有测试项目代码仅在 Debug 模式下有效。
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_list_test")
+    include_directories("${PROJECT_SOURCE_DIR}/orthogonal_linked/orthogonal_linked_octree_test")
 endif()
 
 if (NOT CMAKE_BUILD_TYPE)
@@ -99,4 +100,5 @@ target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
 # 所有测试项目仅在 Debug 模式下有效。
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory("orthogonal_linked/orthogonal_linked_list_test")
+    add_subdirectory("orthogonal_linked/orthogonal_linked_octree_test")
 endif()
