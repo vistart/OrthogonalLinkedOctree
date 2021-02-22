@@ -27,7 +27,7 @@ namespace vistart
             OctreeNode() = default;
             /**
              *
-             * @param point
+             * @param point the pointer to the point to be inserted.
              */
             OctreeNode(std::shared_ptr<T> point)
             {
@@ -61,13 +61,26 @@ namespace vistart
                 return stream;
             }
 
+            /**
+             * Return the points.
+             * Note: If you want to get the size of this node, please access [[size()]] method instead.
+             * @return points.
+             */
             std::unordered_set<std::shared_ptr<T>>& GetPoints()
             {
                 return points;
             }
+
+            /**
+             * Return the size of this node.
+             * @return size.
+             */
+            auto size() const noexcept
+            {
+                return points.size();
+            }
         protected:
             std::unordered_set<std::shared_ptr<T>> points;
-
         };
 	}
 }
