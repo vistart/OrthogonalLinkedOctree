@@ -1,7 +1,7 @@
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-D_DEBUG)
     message(
-            STATUS "MARCO '-DEBUG' enabled."
+            STATUS "MARCO '_DEBUG' enabled."
     )
 else()
     message(
