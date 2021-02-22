@@ -13,6 +13,7 @@
 #define __POINT_H__
 
 #include <iomanip>
+#include <assert.h>
 #ifdef _MSC_VER
 #include <exception>
 #endif
@@ -48,6 +49,30 @@ namespace vistart
         public:
             Point() = default;
             Point(const Point&) = default;
+            Point(std::initializer_list<double> const& c)
+            {
+                assert(c.size() == 3);
+                auto p = c.begin();
+                __X = *p++;
+                __Y = *p++;
+                __Z = *p;
+            }
+            Point(std::initializer_list<double> const& c, std::initializer_list<unsigned char> const& c1)
+            {
+                assert(c.size() == 3);
+                assert(c1.size() == 3);
+                auto p = c.begin();
+                __X = *p++;
+                __Y = *p++;
+                __Z = *p;
+                auto p1 = c1.begin();
+                __R = *p1++;
+                __G = *p1++;
+                __B = *p1;
+                has_RGB = true;
+            }
+            Point(double X, double Y, double Z) : __X(X), __Y(Y), __Z(Z){}
+            Point(double X, double Y, double Z, unsigned char R, unsigned char G, unsigned char B) : __X(X), __Y(Y), __Z(Z), __R(R), __G(G), __B(B), has_RGB(true) {}
             Point& operator=(const Point&) = default;
             Point(Point&&) = default;
             Point& operator=(Point&&) = default;

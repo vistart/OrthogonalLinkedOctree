@@ -4,7 +4,7 @@
  * | |/ // /(__  )  / / / /| || |     | |
  * |___//_//____/  /_/ /_/ |_||_|     |_|
  * @link https://vistart.me/
- * @copyright Copyright (c) 2019 - 2020 vistart
+ * @copyright Copyright (c) 2019 - 2021 vistart
  * @license https://vistart.me/license/
 */
 //
@@ -13,13 +13,20 @@
 #include <sstream>
 #include <memory>
 
-#include "file_format/plyfile/PlyFile.h"
-#include "orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
+// #include "file_format/plyfile/PlyFile.h"
+// #include "orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
+#include <torch/torch.h>
+#include "file_format/point_cloud_base_presentation/Point.h"
+#include "orthogonal_linked/orthogonal_linked_octree_with_torch/LinkedOctree.h"
+#ifdef _DEBUG
+#include <chrono>
+#endif
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
+    /*
 	if (argc < 2)
 	{
 		cout << "Invalid File Path!" << endl;
@@ -47,5 +54,19 @@ int main(int argc, char* argv[])
         vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(point_list, depth);
     } else
 	cout << "Invalid file!\n";
-	return 0;
+     */
+#ifdef _DEBUG
+    const chrono::steady_clock::time_point time_start = chrono::steady_clock::now();
+#endif
+    for (int i = 0; i < 100; i++) {
+        const auto& r1 = at::rand({3, 2048});
+        const auto& octree = vistart::orthogonal_linked_octree_with_torch::LinkedOctree<vistart::point_cloud_base_presentation::Point>(r1.transpose(0, 1), 12);
+    }
+
+#ifdef _DEBUG
+    const chrono::steady_clock::time_point time_end_read_header = chrono::steady_clock::now();
+    const chrono::duration<double> duration_read_header = chrono::duration_cast<chrono::duration<double>>(time_end_read_header - time_start);
+    cout << "Time elapsed of 10 times: " << duration_read_header.count() << " s" << endl;
+#endif
+    return 0;
 }
