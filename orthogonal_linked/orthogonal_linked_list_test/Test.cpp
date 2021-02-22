@@ -13,6 +13,7 @@
 
 #include "Coordinate.h"
 #include "LinkedCoordinate.h"
+#include <torch/torch.h>
 
 namespace vistart
 {
@@ -134,6 +135,16 @@ namespace vistart
 		};
 #pragma endregion
 #pragma endregion
+#pragma endregion
+#pragma region 随机坐标组
+		struct RandomCoordinates256
+        {
+            const at::Tensor coords = at::rand({256, 3});
+            RandomCoordinates256()
+            {
+                torch::manual_seed(1);
+            }
+        };
 #pragma endregion
 		BOOST_AUTO_TEST_SUITE(TestCoordinate)
 			/**
@@ -2152,6 +2163,23 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[1], c31[1]);
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
+		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
+        {
+            RandomCoordinates256 coords;
+            std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth4)
+        {
+
+        }
+		BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth4)
+        {
+
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth4)
+        {
+
+        }
 		BOOST_AUTO_TEST_SUITE_END()
 
 	}
