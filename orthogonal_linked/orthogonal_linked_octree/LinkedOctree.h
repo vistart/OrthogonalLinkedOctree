@@ -8,8 +8,8 @@
  * @license https://vistart.me/license/
 */
 #pragma once
-#ifndef __OCTREE_H__
-#define __OCTREE_H__
+#ifndef __LINKED_OCTREE_H__
+#define __LINKED_OCTREE_H__
 #include <type_traits>
 
 #include "../../file_format/point_cloud_base_presentation/PointList.h"
