@@ -11,30 +11,27 @@ if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
     # 只生成地址无关代码
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    execute_process(COMMAND python3 -c "import torch; print(torch.utils.cmake_prefix_path, end='')" RESULT_VARIABLE TORCH_RV OUTPUT_VARIABLE TORCH_OV)
 endif()
 if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS "Visual Studio 2019 would detect the vcpkg.cmake automatically.")
     # set(CMAKE_TOOLCHAIN_FILE C:/Users/vistart/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake)
-    set(PYTHON_EXECUTABLE "C:/Program Files/Python38/python.exe")
+    set(PYTHON_EXECUTABLE "C:/Program Files/Python39/python.exe")
     # 代码节数超过了默认上限，需要开启 bigobj。
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+    execute_process(COMMAND python -c "import torch; print(torch.utils.cmake_prefix_path, end='')" RESULT_VARIABLE TORCH_RV OUTPUT_VARIABLE TORCH_OV)
 endif()
 
-execute_process(COMMAND python3 -c "import torch; print(torch.utils.cmake_prefix_path, end='')" RESULT_VARIABLE TORCH_RV OUTPUT_VARIABLE TORCH_OV)
 if (TORCH_RV EQUAL 0)
     add_compile_options(-D_TORCH)
-    message(
-            STATUS "MARCO '_TORCH' enabled."
-    )
+    message(STATUS "MARCO '_TORCH' enabled.")
     include(${TORCH_OV}/Torch/TorchConfig.cmake)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
     include_directories(${TORCH_INSTALL_PREFIX}/include)
     include_directories(${TORCH_INSTALL_PREFIX}/include/torch/csrc/api/include)
 else()
-    message(
-            STATUS "MARCO '_TORCH' disabled."
-    )
+    message(STATUS "TORCH Disabled: ${TORCH_RV}")
 endif()
 
 aux_source_directory(. DIR_SRCS)
