@@ -236,6 +236,11 @@ namespace vistart
                 const auto& [c, t] = v;
                 this->set(c, v);
             }
+
+            auto size() const
+            {
+			    return pointers.size();
+            }
 		
 		protected:
 			pointers_map pointers;

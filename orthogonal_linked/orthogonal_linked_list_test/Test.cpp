@@ -167,6 +167,10 @@ namespace vistart
         {
             const at::Tensor coords = at::rand({262144, 3});
         };
+        struct RandomCoordinates16777216
+        {
+            const at::Tensor coords = at::rand({16777216, 3});
+        };
 #pragma endregion
 		BOOST_AUTO_TEST_SUITE(TestCoordinate)
 			/**
@@ -2190,8 +2194,9 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
             Coordinate3DwithCoordinate3DFixture space;
+            unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
                 std::vector<double> t {
@@ -2199,230 +2204,285 @@ namespace vistart
                     coords.coords[i][1].item().toDouble(),
                     coords.coords[i][2].item().toDouble()
                 };
-                space.c->set(
-                        {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                         static_cast<unsigned int>(c1[i][1].item().toInt()),
-                         static_cast<unsigned int>(c1[i][2].item().toInt())},
-                        std::make_shared<std::vector<double>>(t)
-                        );
+                const auto& c2 = {
+                        static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())
+                };
+                if (!space.c->exists(c2)) count++;
+                space.c->set(c2,std::make_shared<std::vector<double>>(t));
             }
+            BOOST_REQUIRE_EQUAL(space.c->size(), count);
+            const auto& v = *(space.c->get(
+                {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                static_cast<unsigned int>(c1[0][1].item().toInt()),
+                static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
             // std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth4)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
-                  std::vector<double> t {
+                std::vector<double> t {
                    coords.coords[i][0].item().toDouble(),
                    coords.coords[i][1].item().toDouble(),
                    coords.coords[i][2].item().toDouble()
-                  };
-                  space.c->set(
+                };
+                space.c->set(
                 {  static_cast<unsigned int>(c1[i][0].item().toInt()),
                    static_cast<unsigned int>(c1[i][1].item().toInt()),
                    static_cast<unsigned int>(c1[i][2].item().toInt())},
-                   std::make_shared<std::vector<double>>(t)
-                  );
+                   std::make_shared<std::vector<double>>(t));
             }
 
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
             for (int i = 0; i < coords.coords.size(0); i++)
             {
-               std::vector<double> t {
-               coords.coords[i][0].item().toDouble(),
-               coords.coords[i][1].item().toDouble(),
-               coords.coords[i][2].item().toDouble()
-               };
                space.c->erase(
                 {static_cast<unsigned int>(c1[i][0].item().toInt()),
                  static_cast<unsigned int>(c1[i][1].item().toInt()),
                  static_cast<unsigned int>(c1[i][2].item().toInt())}
                  );
-             }
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
             //std::cout << coords.coords[0] << std::endl;
         }
 		BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth4)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
-           {
+            {
                 std::vector<double> t {
-                coords.coords[i][0].item().toDouble(),
-                coords.coords[i][1].item().toDouble(),
-                coords.coords[i][2].item().toDouble()
-               };
-                space.c->set(
-                 {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                  static_cast<unsigned int>(c1[i][1].item().toInt()),
-                  static_cast<unsigned int>(c1[i][2].item().toInt())},
-                  std::make_shared<std::vector<double>>(t)
-                  );
-           }
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                const auto& c2 = {
+                        static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())};
+                if (!space.c->exists(c2)) count++;
+                space.c->set(c2,std::make_shared<std::vector<double>>(t));
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), count);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
             //std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth4)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
-          {
-               std::vector<double> t {
-                  coords.coords[i][0].item().toDouble(),
-                  coords.coords[i][1].item().toDouble(),
-                  coords.coords[i][2].item().toDouble()
-               };
-               space.c->set(
-               {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                static_cast<unsigned int>(c1[i][1].item().toInt()),
-                static_cast<unsigned int>(c1[i][2].item().toInt())},
-                std::make_shared<std::vector<double>>(t)
+            {
+                std::vector<double> t {
+                   coords.coords[i][0].item().toDouble(),
+                   coords.coords[i][1].item().toDouble(),
+                   coords.coords[i][2].item().toDouble()
+                };
+                space.c->set({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
                 );
-          }
-           for (int i = 0; i < coords.coords.size(0); i++)
-          {
-              std::vector<double> t {
-                  coords.coords[i][0].item().toDouble(),
-                  coords.coords[i][1].item().toDouble(),
-                  coords.coords[i][2].item().toDouble()
-             };
-              space.c->erase(
-             {static_cast<unsigned int>(c1[i][0].item().toInt()),
-              static_cast<unsigned int>(c1[i][1].item().toInt()),
-              static_cast<unsigned int>(c1[i][2].item().toInt())}
-              );
-          }
+            }
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                space.c->erase({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())}
+                );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
             //std::cout << coords.coords[0] << std::endl;
         }
         //深度为8
         BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth8)
         {
-           torch::manual_seed(1);
-           RandomCoordinates65536 coords;
-           const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-           Coordinate3DwithCoordinate3DFixture space;
-           for (int i = 0; i < coords.coords.size(0); i++)
-           {
-              std::vector<double> t {
-                  coords.coords[i][0].item().toDouble(),
-                  coords.coords[i][1].item().toDouble(),
-                  coords.coords[i][2].item().toDouble()
-             };
-              space.c->set(
-              {static_cast<unsigned int>(c1[i][0].item().toInt()),
-               static_cast<unsigned int>(c1[i][1].item().toInt()),
-               static_cast<unsigned int>(c1[i][2].item().toInt())},
-               std::make_shared<std::vector<double>>(t)
-               );
-           }
+            torch::manual_seed(1);
+            RandomCoordinates65536 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+            Coordinate3DwithCoordinate3DFixture space;
+            unsigned int count = 0;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                const auto& c2 = {
+                        static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())};
+                if (!space.c->exists(c2)) count++;
+                space.c->set(c2, std::make_shared<std::vector<double>>(t)
+                );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), count);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
            // std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth8)
         {
-             torch::manual_seed(1);
-             RandomCoordinates65536 coords;
-             const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-             Coordinate3DwithCoordinate3DFixture space;
-             for (int i = 0; i < coords.coords.size(0); i++)
+		    torch::manual_seed(1);
+		    RandomCoordinates65536 coords;
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+		    Coordinate3DwithCoordinate3DFixture space;
+		    for (int i = 0; i < coords.coords.size(0); i++)
             {
                 std::vector<double> t {
-                     coords.coords[i][0].item().toDouble(),
-                     coords.coords[i][1].item().toDouble(),
-                     coords.coords[i][2].item().toDouble()
-             };
-             space.c->set(
-             {  static_cast<unsigned int>(c1[i][0].item().toInt()),
-                static_cast<unsigned int>(c1[i][1].item().toInt()),
-                static_cast<unsigned int>(c1[i][2].item().toInt())},
-                std::make_shared<std::vector<double>>(t)
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                space.c->set({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
                 );
-              }
+            }
 
-             for (int i = 0; i < coords.coords.size(0); i++)
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
             {
-                 std::vector<double> t {
-                      coords.coords[i][0].item().toDouble(),
-                      coords.coords[i][1].item().toDouble(),
-                      coords.coords[i][2].item().toDouble()
-                 };
                  space.c->erase(
                  {static_cast<unsigned int>(c1[i][0].item().toInt()),
                   static_cast<unsigned int>(c1[i][1].item().toInt()),
                   static_cast<unsigned int>(c1[i][2].item().toInt())}
                   );
-             }
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
             //std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth8)
         {
-              torch::manual_seed(1);
-              RandomCoordinates65536 coords;
-              const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-              LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
-              for (int i = 0; i < coords.coords.size(0); i++)
-              {
-                  std::vector<double> t {
-                        coords.coords[i][0].item().toDouble(),
-                        coords.coords[i][1].item().toDouble(),
-                        coords.coords[i][2].item().toDouble()
-                  };
-                   space.c->set(
-                  {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                   static_cast<unsigned int>(c1[i][1].item().toInt()),
-                   static_cast<unsigned int>(c1[i][2].item().toInt())},
-                   std::make_shared<std::vector<double>>(t)
-                   );
-               }
-               //std::cout << coords.coords[0] << std::endl;
-         }
-         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth8)
-         {
-               torch::manual_seed(1);
-               RandomCoordinates65536 coords;
-               const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-               LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
-               for (int i = 0; i < coords.coords.size(0); i++)
-               {
-                   std::vector<double> t {
-                        coords.coords[i][0].item().toDouble(),
-                        coords.coords[i][1].item().toDouble(),
-                        coords.coords[i][2].item().toDouble()
-                   };
-                    space.c->set(
-                   {static_cast<unsigned int>(c1[i][0].item().toInt()),
+            torch::manual_seed(1);
+            RandomCoordinates65536 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+            LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            unsigned int count = 0;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                const auto& c2 = {
+                        static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())};
+                if (!space.c->exists(c2)) count++;
+                space.c->set(c2, std::make_shared<std::vector<double>>(t));
+            }
+            BOOST_REQUIRE_LE(space.c->size(), count);
+            const auto& v = *(space.c->get({
+                static_cast<unsigned int>(c1[0][0].item().toInt()),
+                static_cast<unsigned int>(c1[0][1].item().toInt()),
+                static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+           //std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth8)
+        {
+		    torch::manual_seed(1);
+		    RandomCoordinates65536 coords;
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+		    LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+		    for (int i = 0; i < coords.coords.size(0); i++)
+		    {
+                std::vector<double> t {
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                space.c->set({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
                     static_cast<unsigned int>(c1[i][1].item().toInt()),
                     static_cast<unsigned int>(c1[i][2].item().toInt())},
-                    std::make_shared<std::vector<double>>(t)
-                    );
-               }
-               for (int i = 0; i < coords.coords.size(0); i++)
-               {
-                   std::vector<double> t {
-                       coords.coords[i][0].item().toDouble(),
-                       coords.coords[i][1].item().toDouble(),
-                       coords.coords[i][2].item().toDouble()
-                   };
-                   space.c->erase(
-                           {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                            static_cast<unsigned int>(c1[i][1].item().toInt()),
-                            static_cast<unsigned int>(c1[i][2].item().toInt())}
-                            );
-               }
-               //std::cout << coords.coords[0] << std::endl;
-       }
-       //深度为12
-       BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth12)
-       {
+                    std::make_shared<std::vector<double>>(t));
+		    }
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                space.c->erase(
+                       {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())}
+                        );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
+           //std::cout << coords.coords[0] << std::endl;
+        }
+        //深度为12
+        BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth12)
+        {
             torch::manual_seed(1);
             RandomCoordinates262144 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2438,100 +2498,268 @@ namespace vistart
                           std::make_shared<std::vector<double>>(t)
                           );
             }
+            BOOST_REQUIRE_LE(space.c->size(), 262144);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
             // std::cout << coords.coords[0] << std::endl;
-         }
-         BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth12)
-         {
-               torch::manual_seed(1);
-               RandomCoordinates262144 coords;
-               const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-               Coordinate3DwithCoordinate3DFixture space;
-               for (int i = 0; i < coords.coords.size(0); i++)
-               {
-                       std::vector<double> t {
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth12)
+        {
+		    torch::manual_seed(1);
+		    RandomCoordinates262144 coords;
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+		    Coordinate3DwithCoordinate3DFixture space;
+		    for (int i = 0; i < coords.coords.size(0); i++)
+		    {
+		        std::vector<double> t {
                           coords.coords[i][0].item().toDouble(),
                           coords.coords[i][1].item().toDouble(),
                           coords.coords[i][2].item().toDouble()
-                      };
-                        space.c->set(
-                         {  static_cast<unsigned int>(c1[i][0].item().toInt()),
-                            static_cast<unsigned int>(c1[i][1].item().toInt()),
-                            static_cast<unsigned int>(c1[i][2].item().toInt())},
-                            std::make_shared<std::vector<double>>(t)
-                            );
-                }
-
-                for (int i = 0; i < coords.coords.size(0); i++)
-                {
-                   std::vector<double> t {
-                       coords.coords[i][0].item().toDouble(),
-                       coords.coords[i][1].item().toDouble(),
-                       coords.coords[i][2].item().toDouble()
-                   };
-                   space.c->erase(
-                   {static_cast<unsigned int>(c1[i][0].item().toInt()),
+		        };
+                space.c->set({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
                     static_cast<unsigned int>(c1[i][1].item().toInt()),
-                    static_cast<unsigned int>(c1[i][2].item().toInt())}
-                    );
-                }
-               //std::cout << coords.coords[0] << std::endl;
-         }
-         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth12)
-         {
-               torch::manual_seed(1);
-               RandomCoordinates262144 coords;
-               const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
-               LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
-               for (int i = 0; i < coords.coords.size(0); i++)
-               {
-                  std::vector<double> t {
-                      coords.coords[i][0].item().toDouble(),
-                      coords.coords[i][1].item().toDouble(),
-                      coords.coords[i][2].item().toDouble()
-                     };
-                   space.c->set(
-                  {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                   static_cast<unsigned int>(c1[i][1].item().toInt()),
-                   static_cast<unsigned int>(c1[i][2].item().toInt())},
-                   std::make_shared<std::vector<double>>(t)
-                   );
-               }
-               //std::cout << coords.coords[0] << std::endl;
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t));
+		    }
+
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+               space.c->erase(
+               {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                static_cast<unsigned int>(c1[i][1].item().toInt()),
+                static_cast<unsigned int>(c1[i][2].item().toInt())}
+                );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
+            //std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth12)
+        {
+		    torch::manual_seed(1);
+		    RandomCoordinates262144 coords;
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+		    LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+		    for (int i = 0; i < coords.coords.size(0); i++)
+		    {
+		        std::vector<double> t {
+		            coords.coords[i][0].item().toDouble(),
+		            coords.coords[i][1].item().toDouble(),
+		            coords.coords[i][2].item().toDouble()
+		        };
+		        space.c->set({
+		            static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t));
+		    }
+            BOOST_REQUIRE_LE(space.c->size(), 262144);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+		    //std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth12)
         {
 		    torch::manual_seed(1);
             RandomCoordinates262144 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
-                  std::vector<double> t {
-                        coords.coords[i][0].item().toDouble(),
-                        coords.coords[i][1].item().toDouble(),
-                        coords.coords[i][2].item().toDouble()
-                     };
-                  space.c->set(
-                          {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                           static_cast<unsigned int>(c1[i][1].item().toInt()),
-                           static_cast<unsigned int>(c1[i][2].item().toInt())},
-                           std::make_shared<std::vector<double>>(t)
-                           );
-             }
+                std::vector<double> t {
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                space.c->set({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                             std::make_shared<std::vector<double>>(t)
+                             );
+            }
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                space.c->erase({
+                    static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())}
+                    );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
+            //std::cout << coords.coords[0] << std::endl;
+        }
+        //深度为12
+        BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth16)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates16777216 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
                 std::vector<double> t {
-                          coords.coords[i][0].item().toDouble(),
-                          coords.coords[i][1].item().toDouble(),
-                          coords.coords[i][2].item().toDouble()
+                        coords.coords[i][0].item().toDouble(),
+                        coords.coords[i][1].item().toDouble(),
+                        coords.coords[i][2].item().toDouble()
                 };
+                space.c->set(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
+                );
+            }
+            BOOST_REQUIRE_LE(space.c->size(), 16777216);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            // std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth16)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates16777216 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            Coordinate3DwithCoordinate3DFixture space;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                        coords.coords[i][0].item().toDouble(),
+                        coords.coords[i][1].item().toDouble(),
+                        coords.coords[i][2].item().toDouble()
+                };
+                space.c->set(
+                {  static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
+                );
+            }
+
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
                 space.c->erase(
-                       {static_cast<unsigned int>(c1[i][0].item().toInt()),
-                        static_cast<unsigned int>(c1[i][1].item().toInt()),
-                        static_cast<unsigned int>(c1[i][2].item().toInt())}
-                        );
-              }
-              //std::cout << coords.coords[0] << std::endl;
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())}
+                );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
+            //std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth16)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates16777216 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                        coords.coords[i][0].item().toDouble(),
+                        coords.coords[i][1].item().toDouble(),
+                        coords.coords[i][2].item().toDouble()
+                };
+                space.c->set(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
+                );
+            }
+
+            BOOST_REQUIRE_LE(space.c->size(), 16777216);
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            //std::cout << coords.coords[0] << std::endl;
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth16)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates16777216 coords;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                        coords.coords[i][0].item().toDouble(),
+                        coords.coords[i][1].item().toDouble(),
+                        coords.coords[i][2].item().toDouble()
+                };
+                space.c->set(
+                 {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())},
+                    std::make_shared<std::vector<double>>(t)
+                );
+            }
+
+            const auto& v = *(space.c->get(
+                    {static_cast<unsigned int>(c1[0][0].item().toInt()),
+                     static_cast<unsigned int>(c1[0][1].item().toInt()),
+                     static_cast<unsigned int>(c1[0][2].item().toInt())}
+            ));
+            BOOST_REQUIRE_EQUAL(coords.coords[0][0].item().toDouble(), v[0]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][1].item().toDouble(), v[1]);
+            BOOST_REQUIRE_EQUAL(coords.coords[0][2].item().toDouble(), v[2]);
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                space.c->erase(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                    static_cast<unsigned int>(c1[i][1].item().toInt()),
+                    static_cast<unsigned int>(c1[i][2].item().toInt())}
+                );
+            }
+            BOOST_REQUIRE_EQUAL(space.c->size(), 0);
+            //std::cout << coords.coords[0] << std::endl;
         }
 		BOOST_AUTO_TEST_SUITE_END()
 
