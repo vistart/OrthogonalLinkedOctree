@@ -46,6 +46,15 @@ namespace vistart
 			}
 			~Coordinate3DFixture() = default;
 		};
+		struct Coordinate3DwithCoordinate3DFixture
+        {
+		    std::shared_ptr<Coordinate<3, std::vector<double>>> c;
+            Coordinate3DwithCoordinate3DFixture()
+            {
+		        c = std::make_shared<Coordinate<3, std::vector<double>>>();
+            }
+            ~Coordinate3DwithCoordinate3DFixture() = default;
+        };
 #pragma endregion
 #pragma region 三维坐标-类
 #pragma endregion
@@ -2171,13 +2180,59 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            std::cout << coords.coords[0] << std::endl;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            Coordinate3DwithCoordinate3DFixture space;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                    coords.coords[i][0].item().toDouble(),
+                    coords.coords[i][1].item().toDouble(),
+                    coords.coords[i][2].item().toDouble()
+                };
+                space.c->set(
+                        {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                         static_cast<unsigned int>(c1[i][1].item().toInt()),
+                         static_cast<unsigned int>(c1[i][2].item().toInt())},
+                        std::make_shared<std::vector<double>>(t)
+                        );
+            }
+            // std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth4)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            std::cout << coords.coords[0] << std::endl;
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, 16);
+            Coordinate3DwithCoordinate3DFixture space;
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+                  std::vector<double> t {
+                   coords.coords[i][0].item().toDouble(),
+                   coords.coords[i][1].item().toDouble(),
+                   coords.coords[i][2].item().toDouble()
+                  };
+                  space.c->set(
+                {  static_cast<unsigned int>(c1[i][0].item().toInt()),
+                   static_cast<unsigned int>(c1[i][1].item().toInt()),
+                   static_cast<unsigned int>(c1[i][2].item().toInt())},
+                   std::make_shared<std::vector<double>>(t)
+                  );
+            }
+
+            for (int i = 0; i < coords.coords.size(0); i++)
+            {
+               std::vector<double> t {
+               coords.coords[i][0].item().toDouble(),
+               coords.coords[i][1].item().toDouble(),
+               coords.coords[i][2].item().toDouble()
+               };
+               space.c->erase(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                 static_cast<unsigned int>(c1[i][1].item().toInt()),
+                 static_cast<unsigned int>(c1[i][2].item().toInt())}
+                 );
+             }
+            //std::cout << coords.coords[0] << std::endl;
         }
 		BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth4)
         {
