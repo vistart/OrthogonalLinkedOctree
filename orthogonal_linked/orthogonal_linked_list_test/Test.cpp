@@ -137,13 +137,17 @@ namespace vistart
 #pragma endregion
 #pragma endregion
 #pragma region 随机坐标组
-		struct RandomCoordinates256
+        struct RandomCoordinates256
         {
             const at::Tensor coords = at::rand({256, 3});
-            RandomCoordinates256()
-            {
-                torch::manual_seed(1);
-            }
+        };
+        struct RandomCoordinates65536
+        {
+            const at::Tensor coords = at::rand({65536, 3});
+        };
+        struct RandomCoordinates262144
+        {
+            const at::Tensor coords = at::rand({262144, 3});
         };
 #pragma endregion
 		BOOST_AUTO_TEST_SUITE(TestCoordinate)
@@ -2165,20 +2169,27 @@ namespace vistart
 		}
 		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
         {
+            torch::manual_seed(1);
             RandomCoordinates256 coords;
             std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DRemoveBatchInDepth4)
         {
-
+            torch::manual_seed(1);
+            RandomCoordinates256 coords;
+            std::cout << coords.coords[0] << std::endl;
         }
 		BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DAddBatchInDepth4)
         {
-
+            torch::manual_seed(1);
+            RandomCoordinates256 coords;
+            std::cout << coords.coords[0] << std::endl;
         }
         BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DRemoveBatchInDepth4)
         {
-
+            torch::manual_seed(1);
+            RandomCoordinates256 coords;
+            std::cout << coords.coords[0] << std::endl;
         }
 		BOOST_AUTO_TEST_SUITE_END()
 
