@@ -52,7 +52,16 @@ int main(int argc, char* argv[])
         cout << "The last point is: " << *point_list->GetPoints()->back() << endl;
 
         cout << "Construct the Octree of Point Cloud: " << endl;
-        vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(point_list, depth);
+        vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> o(point_list, depth);
+#ifdef _DEBUG
+        const chrono::steady_clock::time_point time_start = chrono::steady_clock::now();
+#endif
+        cout << o.GetAllSizes() << endl;
+#ifdef _DEBUG
+        const chrono::steady_clock::time_point time_end_read_header = chrono::steady_clock::now();
+        const chrono::duration<double> duration_read_header = chrono::duration_cast<chrono::duration<double>>(time_end_read_header - time_start);
+        cout << "Time elapsed of getting all sizes: " << duration_read_header.count() << " s" << endl;
+#endif
     } else
 	cout << "Invalid file!\n";
      /*

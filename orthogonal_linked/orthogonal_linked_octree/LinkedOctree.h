@@ -126,9 +126,9 @@ namespace vistart
             virtual size_t GetAllSizes()
             {
                 size_t result = 0;
+                auto it = this->pointers.begin();
 #ifdef __AVX2__
                 __m256i a = _mm256_set1_epi32(0);
-                auto it = this->pointers.begin();
             	for (auto i = 0; i < this->pointers.size() - 8; i+=8)
             	{
                     const auto s0 = (it++)->second->size();
@@ -143,9 +143,12 @@ namespace vistart
                     a = _mm256_add_epi32(a, b);
             	}
                 int acc[8];
-            	_mm256_store_si256((__m256i*)acc, a);
+            	__m256i mask = _mm256_set1_epi32(0xffffffff);
+                _mm256_maskstore_epi32(acc, mask, a);
                 result = acc[0] + acc[1] + acc[2] + acc[3] + acc[4] + acc[5] + acc[6] + acc[7];
-                for (auto i = this->pointers.size() - 8; i < this->pointers.size(); i++) result += (it++)->second->size();
+                while (it != this->pointers.end()) result += (it++)->second->size();
+#else
+                while (it != this->pointers.end()) result += (it++)->second->size();
 #endif
                 return result;
             }
