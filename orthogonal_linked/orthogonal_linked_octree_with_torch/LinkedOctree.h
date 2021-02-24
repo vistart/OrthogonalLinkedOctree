@@ -15,13 +15,11 @@
 #include "../orthogonal_linked_list/Coordinate.h"
 #include "../orthogonal_linked_list/LinkedCoordinate.h"
 #include "../orthogonal_linked_octree/OctreeNode.h"
-#include "OctreeNode.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <tuple>
 #include <vector>
-#include <map>
 #include <torch/torch.h>
 #ifdef _MSC_VER
 #include <exception>

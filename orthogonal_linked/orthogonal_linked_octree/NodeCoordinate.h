@@ -24,9 +24,14 @@ namespace vistart
             {
             }
 
-            NodeCoordinate(double X, double Y, double Z, unsigned char depth): X(round(X)), Y(round(Y)), Z(round(Z)), depth(depth)
+            NodeCoordinate(double X, double Y, double Z, unsigned char depth):
+        	X(static_cast<unsigned int>(round(X))),
+        	Y(static_cast<unsigned int>(round(Y))),
+        	Z(static_cast<unsigned int>(round(Z))), depth(depth)
             {
             }
+
+            virtual ~NodeCoordinate() = default;
 
             /**
              * Determine whether the two coordinates are equal.

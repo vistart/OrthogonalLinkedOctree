@@ -18,11 +18,11 @@ namespace vistart {
     namespace orthogonal_linked_octree_for_python
     {
         class OctreeNodeInPly : public
-                vistart::orthogonal_linked_octree::OctreeNode<
-                vistart::point_cloud_base_presentation::PlyVertex> {
+                orthogonal_linked_octree::OctreeNode<
+                point_cloud_base_presentation::PlyVertex> {
         public:
             OctreeNodeInPly() = default;
-            typedef vistart::point_cloud_base_presentation::PlyVertex plyvertex;
+            typedef point_cloud_base_presentation::PlyVertex plyvertex;
             OctreeNodeInPly(std::shared_ptr<plyvertex> point) : OctreeNode(point) {}
             OctreeNodeInPly(std::unordered_set<std::shared_ptr<plyvertex>> points) : OctreeNode(points) {}
             void insert_point(std::shared_ptr<plyvertex> point) {};

@@ -12,23 +12,26 @@
 #endif
 
 #ifdef __LINKED_OCTREE_IN_PLY_H__
-vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly::LinkedOctreeInPly(std::string const& file_path, unsigned int depth)
+namespace vp = vistart::point_cloud_base_presentation;
+namespace vo = vistart::orthogonal_linked_octree;
+namespace vop = vistart::orthogonal_linked_octree_for_python;
+vop::LinkedOctreeInPly::LinkedOctreeInPly(std::string const& file_path, unsigned int depth)
 {
-    plyfile = std::make_shared<vistart::point_cloud_base_presentation::PlyFile>(file_path);
+    plyfile = std::make_shared<vp::PlyFile>(file_path);
     if (plyfile->GetIsValid()) {
-        vistart::orthogonal_linked_octree::LinkedOctree<
-                vistart::point_cloud_base_presentation::PlyVertexList,
-                vistart::point_cloud_base_presentation::PlyVertex,
-                vistart::point_cloud_base_presentation::PlyFile>
+        vo::LinkedOctree<
+                vp::PlyVertexList,
+                vp::PlyVertex,
+                vp::PlyFile>
                 (plyfile->GetPointList(), depth);
     } else
-        std::cout << "Invalid file!" << std::endl;
+    std::cout << "Invalid file!" << std::endl;
 }
 
-bool vistart::orthogonal_linked_octree_for_python::LinkedOctreeInPly::insert_point(
-        const vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile>::NodeCoordinate &c,
-        std::shared_ptr<vistart::point_cloud_base_presentation::PlyVertex> point) {
-    return vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile>::insert_point(c, point);
+bool vop::LinkedOctreeInPly::insert_point(
+        const NodeCoordinate &c,
+        std::shared_ptr<vp::PlyVertex> point) {
+    return LinkedOctree<vp::PlyVertexList, vp::PlyVertex, vp::PlyFile>::insert_point(c, point);
 }
 
 #endif //__LINKED_OCTREE_IN_PLY_H__
