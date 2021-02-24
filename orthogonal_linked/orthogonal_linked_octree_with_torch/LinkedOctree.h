@@ -62,7 +62,10 @@ namespace vistart
                 {
                     insert_point(coords_rounded[i], coords[i]);
                     //std::cout << coords_rounded[i] << std::endl << coords[i] << std::endl;
-                    const auto& t = this->get({coords_rounded[i][0].item().toShort(), coords_rounded[i][1].item().toShort(), coords_rounded[i][2].item().toShort()});
+                    const auto& t = this->get({
+                        static_cast<unsigned int>(coords_rounded[i][0].item().toInt()),
+                    	static_cast<unsigned int>(coords_rounded[i][1].item().toInt()),
+                    	static_cast<unsigned int>(coords_rounded[i][2].item().toInt())});
                     const std::unordered_set<std::shared_ptr<TPoint>>& p0 = t->GetPoints();
                     //const auto pointer = p0.begin();
                     //std::cout << **pointer << std::endl;
