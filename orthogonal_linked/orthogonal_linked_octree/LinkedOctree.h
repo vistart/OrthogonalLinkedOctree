@@ -21,6 +21,7 @@
 #include <tuple>
 #include <vector>
 #include <map>
+#include <immintrin.h>
 #ifdef _MSC_VER
 #include <exception>
 #endif
@@ -121,6 +122,32 @@ namespace vistart
                 const auto& node = this->get(c);
                 *node << point;
                 return true;
+            }
+            virtual size_t GetAllSizes()
+            {
+                size_t result = 0;
+#ifdef __AVX2__
+                __m256i a = _mm256_set1_epi32(0);
+                auto it = this->pointers.begin();
+            	for (auto i = 0; i < this->pointers.size() - 8; i+=8)
+            	{
+                    const auto s0 = (it++)->second->size();
+                    const auto s1 = (it++)->second->size();
+                    const auto s2 = (it++)->second->size();
+                    const auto s3 = (it++)->second->size();
+                    const auto s4 = (it++)->second->size();
+                    const auto s5 = (it++)->second->size();
+                    const auto s6 = (it++)->second->size();
+                    const auto s7 = (it++)->second->size();
+                    __m256i b = _mm256_set_epi32(s7, s6, s5, s4, s3, s2, s1, s0);
+                    a = _mm256_add_epi32(a, b);
+            	}
+                int acc[8];
+            	_mm256_store_si256((__m256i*)acc, a);
+                result = acc[0] + acc[1] + acc[2] + acc[3] + acc[4] + acc[5] + acc[6] + acc[7];
+                for (auto i = this->pointers.size() - 8; i < this->pointers.size(); i++) result += (it++)->second->size();
+#endif
+                return result;
             }
         protected:
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.

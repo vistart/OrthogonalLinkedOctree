@@ -14,11 +14,11 @@
 #include <memory>
 #include <cmath>
 
-// #include "file_format/plyfile/PlyFile.h"
-// #include "orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
+#include "file_format/plyfile/PlyFile.h"
+#include "orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
 #include <torch/torch.h>
 #include "file_format/point_cloud_base_presentation/Point.h"
-#include "orthogonal_linked/orthogonal_linked_octree_with_torch/LinkedOctree.h"
+//#include "orthogonal_linked/orthogonal_linked_octree_with_torch/LinkedOctree.h"
 #ifdef _DEBUG
 #include <chrono>
 #endif
@@ -27,7 +27,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    /*
+
 	if (argc < 2)
 	{
 		cout << "Invalid File Path!" << endl;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
         vistart::orthogonal_linked_octree::LinkedOctree<vistart::point_cloud_base_presentation::PlyVertexList, vistart::point_cloud_base_presentation::PlyVertex, vistart::point_cloud_base_presentation::PlyFile> LinkedOctree(point_list, depth);
     } else
 	cout << "Invalid file!\n";
-     */
+     /*
 #ifdef _DEBUG
     const chrono::steady_clock::time_point time_start = chrono::steady_clock::now();
 #endif
@@ -76,12 +76,13 @@ int main(int argc, char* argv[])
                     }
                 }
         std::cout << count << std::endl;
+        std::cout << octree->GetAllSizes() << std::endl;
     }
 
 #ifdef _DEBUG
     const chrono::steady_clock::time_point time_end_read_header = chrono::steady_clock::now();
     const chrono::duration<double> duration_read_header = chrono::duration_cast<chrono::duration<double>>(time_end_read_header - time_start);
     cout << "Time elapsed of 10 times: " << duration_read_header.count() << " s" << endl;
-#endif
+#endif*/
     return 0;
 }

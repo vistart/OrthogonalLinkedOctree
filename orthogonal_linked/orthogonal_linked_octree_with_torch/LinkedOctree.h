@@ -69,7 +69,7 @@ namespace vistart
                     //std::cout << **pointer << std::endl;
                 }
             }
-            ~LinkedOctree() = default;
+            virtual ~LinkedOctree() = default;
             /*
              * Point coordinate.
              * Each point coordinate contains X, Y and Z.
@@ -98,7 +98,6 @@ namespace vistart
                 const auto& p1 = std::make_shared<TPoint>(p);
                 return insert_point(c1, p1);
             }
-
             virtual bool insert_point(NodeCoordinate const& c, std::shared_ptr<TPoint> point)
             {
                 if (!orthogonal_linked_list::Coordinate<3, orthogonal_linked_octree::OctreeNode<TPoint>>::exists(c))
