@@ -28,7 +28,8 @@
       "wslPath": "${defaultWSLPath}",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "variables": [],
-      "cmakeToolchain": ""
+      "cmakeToolchain": "",
+      "intelliSenseMode": "linux-gcc-x64"
     },
     {
       "name": "Linux-GCC-Debug",
@@ -90,7 +91,8 @@
       "inheritEnvironments": [ "linux_x64" ],
       "wslPath": "${defaultWSLPath}",
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
-      "variables": []
+      "variables": [],
+      "intelliSenseMode": "linux-gcc-x64"
     },
     {
       "name": "x64-Release",
