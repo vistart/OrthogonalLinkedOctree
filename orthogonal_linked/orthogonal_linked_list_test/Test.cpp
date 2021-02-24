@@ -2189,6 +2189,8 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[1], c31[1]);
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
+        BOOST_AUTO_TEST_SUITE_END()
+        BOOST_AUTO_TEST_SUITE(BenchmarkCoordinate3D)
 		//深度为4
 		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
         {
