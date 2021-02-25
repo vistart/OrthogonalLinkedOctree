@@ -127,7 +127,34 @@ namespace vistart
             {
                 size_t result = 0;
                 auto it = this->pointers.begin();
-#ifdef __AVX2__
+#ifdef __AVX512F__
+                __m512i a = _mm512_set1_epi32(0);
+            	for (auto i = 0; i < this->pointers.size() - 16; i += 16)
+            	{
+                    const auto s0 = (it++)->second->size();
+                    const auto s1 = (it++)->second->size();
+                    const auto s2 = (it++)->second->size();
+                    const auto s3 = (it++)->second->size();
+                    const auto s4 = (it++)->second->size();
+                    const auto s5 = (it++)->second->size();
+                    const auto s6 = (it++)->second->size();
+                    const auto s7 = (it++)->second->size();
+                    const auto s8 = (it++)->second->size();
+                    const auto s9 = (it++)->second->size();
+                    const auto s10 = (it++)->second->size();
+                    const auto s11 = (it++)->second->size();
+                    const auto s12 = (it++)->second->size();
+                    const auto s13 = (it++)->second->size();
+                    const auto s14 = (it++)->second->size();
+                    const auto s15 = (it++)->second->size();
+                    __m512i b = _mm512_set_epi32(s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, s1, s0);
+                    a = _mm512_add_epi32(a, b);
+            	}
+                int acc[16];
+                _mm512_store_epi32(acc, a);
+                for (int i = 0; i < 16; i++) result += acc[i];
+                while (it != this->pointers.end()) result += (it++)->second->size();
+#elif __AVX2__
                 __m256i a = _mm256_set1_epi32(0);
             	for (auto i = 0; i < this->pointers.size() - 8; i+=8)
             	{
