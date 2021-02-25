@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <immintrin.h>
+#include <stdlib.h>
 #ifdef _MSC_VER
 #include <exception>
 #endif
@@ -150,9 +151,10 @@ namespace vistart
                     __m512i b = _mm512_set_epi32(s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, s1, s0);
                     a = _mm512_add_epi32(a, b);
             	}
-                int acc[16];
+                int *acc = (int *)malloc(sizeof(int) * 16);
                 _mm512_store_epi32(acc, a);
                 for (int i = 0; i < 16; i++) result += acc[i];
+                free(acc);
                 while (it != this->pointers.end()) result += (it++)->second->size();
 #elif __AVX2__
                 __m256i a = _mm256_set1_epi32(0);
