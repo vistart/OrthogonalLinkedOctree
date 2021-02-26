@@ -14,6 +14,8 @@
 #include "Point.h"
 #include <cstdlib> // Header file needed to use srand and rand
 #include <ctime> // Header file needed to use time
+#include <torch/torch.h>
+#include <assert.h>
 
 namespace vistart
 {
@@ -21,13 +23,10 @@ namespace vistart
     {
         class PointFixture : public vistart::point_cloud_base_presentation::Point {
         public:
-            PointFixture(unsigned int depth = 5)
+            PointFixture(at::Tensor coord, unsigned int depth = 5)
             {
-                unsigned seed = time(0);
-                srand(seed);
-                X(rand() % static_cast<unsigned int>(pow(2, depth)) + 1);
-                Y(rand() % static_cast<unsigned int>(pow(2, depth)) + 1);
-                Z(rand() % static_cast<unsigned int>(pow(2, depth)) + 1);
+                assert(coord.size(0) == 3);
+                Point(coord[0].item().toDouble(), coord[1].item().toDouble(), coord[2].item().toDouble());
             }
         };
     }

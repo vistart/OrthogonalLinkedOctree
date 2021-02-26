@@ -25,7 +25,6 @@ namespace vistart
 #pragma region Coordinate3D
         struct LinkedOctreeFixture1
         {
-            std::shared_ptr<LinkedOctree<PointListFixture, PointFixture>> o;
             const std::shared_ptr<PointListFixture> p;
             LinkedOctreeFixture1()
             {

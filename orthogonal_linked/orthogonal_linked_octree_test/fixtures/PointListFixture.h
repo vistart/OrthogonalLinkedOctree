@@ -13,6 +13,7 @@
 
 #include "PointList.h"
 #include "PointFixture.h"
+#include <torch/torch.h>
 
 namespace vistart
 {
@@ -20,23 +21,24 @@ namespace vistart
     {
         class PointListFixture : public vistart::point_cloud_base_presentation::PointList<PointFixture> {
         public:
-            PointListFixture(unsigned int count = 10, unsigned int depth = 5)
+            PointListFixture(unsigned int count = 0x10000, unsigned int depth = 8)
             {
                 InsertRandomPoints(count, depth);
             }
 
-            void InsertRandomPoints(unsigned int count = 10, unsigned int depth = 5)
+            void InsertRandomPoints(unsigned int count = 0x10000, unsigned int depth = 8)
             {
+                const auto& rp = at::rand({count, 3}) * pow(2, depth);
                 for (int i = 0; i < count; i++)
                 {
-                    InsertRandomPoint(depth);
+                    InsertRandomPoint(rp[i], depth);
                 }
             }
 
-            void InsertRandomPoint(unsigned int depth = 5)
+            void InsertRandomPoint(const at::Tensor point, unsigned int depth = 8)
             {
-                auto point = std::make_shared<PointFixture>(depth);
-                this->points->emplace_back(point);
+                auto p = std::make_shared<PointFixture>(point, depth);
+                this->points->emplace_back(p);
             }
         };
     }
