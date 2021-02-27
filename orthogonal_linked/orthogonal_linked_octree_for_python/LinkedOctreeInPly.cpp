@@ -8,7 +8,7 @@
  * @license https://vistart.me/license/
 */
 #ifndef __LINKED_OCTREE_IN_PLY_H__
-#include "LinkedOctreeInPly.h"
+#include "OrthogonalLinkedOctreeInPly.h"
 #endif
 
 #ifdef __LINKED_OCTREE_IN_PLY_H__

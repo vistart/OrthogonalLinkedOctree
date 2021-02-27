@@ -103,7 +103,8 @@ pybind11_add_module(plyfile_for_python SHARED
         )
 target_link_libraries(plyfile_for_python PRIVATE plyfile point_cloud_base_presentation)
 
-set(SOURCES OrthogonalLinkedOctree.cpp)
+set(SOURCES examples/OrthogonalLinkedOctreeWithTorch.cpp)
+set(SOURCES examples/OrthogonalLinkedOctreeInPly.cpp)
 set(CMAKE_CXX_STANDARD 17)
 
 target_compile_features ("point_cloud_base_presentation" PUBLIC cxx_std_17)
@@ -130,15 +131,25 @@ endif()
 target_compile_features ("orthogonal_linked_octree_for_python" PUBLIC cxx_std_17)
 
 # 添加链接
-add_executable(OrthogonalLinkedOctree ${SOURCES})
+add_executable(OrthogonalLinkedOctreeInPly examples/OrthogonalLinkedOctreeInPly.cpp)
 if (TORCH_RV EQUAL 0)
-    target_link_libraries(OrthogonalLinkedOctree ${TORCH_LIBRARIES})
-    target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree_with_torch)
+    target_link_libraries(OrthogonalLinkedOctreeInPly ${TORCH_LIBRARIES})
+    target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_octree_with_torch)
 endif()
-target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_octree)
-target_link_libraries(OrthogonalLinkedOctree orthogonal_linked_list)
-target_link_libraries(OrthogonalLinkedOctree plyfile)
-target_link_libraries(OrthogonalLinkedOctree point_cloud_base_presentation)
+target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctreeInPly plyfile)
+target_link_libraries(OrthogonalLinkedOctreeInPly point_cloud_base_presentation)
+
+add_executable(OrthogonalLinkedOctreeWithTorch examples/OrthogonalLinkedOctreeWithTorch.cpp)
+if (TORCH_RV EQUAL 0)
+    target_link_libraries(OrthogonalLinkedOctreeWithTorch ${TORCH_LIBRARIES})
+    target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_octree_with_torch)
+endif()
+target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch plyfile)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch point_cloud_base_presentation)
 
 # 所有测试项目仅在 Debug 模式下有效。
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

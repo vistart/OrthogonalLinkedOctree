@@ -8,7 +8,7 @@
  * @license https://vistart.me/license/
 */
 
-#include "LinkedOctreeInPly.h"
+#include "OrthogonalLinkedOctreeInPly.h"
 #include "OctreeNodeInPly.h"
 #include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
