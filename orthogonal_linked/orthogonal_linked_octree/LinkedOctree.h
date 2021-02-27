@@ -188,6 +188,11 @@ namespace vistart
                 if (!orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::exists(c)) return 0;
                 return this->get(c)->size();
             }
+            virtual double GetReciprocalOfSize(typename orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::base_coord_col const& c) {
+                const auto r = this->GetSizeOf(c);
+                if (r == 0) return NAN;
+                return 1 / static_cast<double>(r);
+            }
         protected:
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.
             /**
