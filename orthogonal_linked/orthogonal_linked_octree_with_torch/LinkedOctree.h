@@ -21,6 +21,8 @@
 #include <tuple>
 #include <vector>
 #include <torch/torch.h>
+#include <immintrin.h>
+#include <cstdlib>
 #ifdef _MSC_VER
 #include <exception>
 #endif
@@ -107,6 +109,75 @@ namespace vistart
                 const auto& node = this->get(c);
                 *node << point;
                 return true;
+            }
+            virtual size_t GetAllSizes()
+            {
+                size_t result = 0;
+                auto it = this->pointers.begin();
+                // 此处手动编写了使用 AVX 指令集的代码。
+                // 在较新的编译器，如GCC 9.3.0，开启 -O3 级别优化时，会自动将简单累加计算改为使用 AVX 指令，因此使用 AVX 指令与直接累加耗时差异不大。
+#ifdef __AVX512F__
+                __m512i a = _mm512_set1_epi32(0);
+            	for (auto i = 0; i < this->pointers.size() - 16; i += 16)
+            	{
+                    const auto s0 = (it++)->second->size();
+                    const auto s1 = (it++)->second->size();
+                    const auto s2 = (it++)->second->size();
+                    const auto s3 = (it++)->second->size();
+                    const auto s4 = (it++)->second->size();
+                    const auto s5 = (it++)->second->size();
+                    const auto s6 = (it++)->second->size();
+                    const auto s7 = (it++)->second->size();
+                    const auto s8 = (it++)->second->size();
+                    const auto s9 = (it++)->second->size();
+                    const auto s10 = (it++)->second->size();
+                    const auto s11 = (it++)->second->size();
+                    const auto s12 = (it++)->second->size();
+                    const auto s13 = (it++)->second->size();
+                    const auto s14 = (it++)->second->size();
+                    const auto s15 = (it++)->second->size();
+                    __m512i b = _mm512_set_epi32(s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, s1, s0);
+                    a = _mm512_add_epi32(a, b);
+            	}
+            	// 不能在 Debug 模式下直接使用 int[16]，因为此时变量并非“64-字节”内存对齐。
+                int *acc = static_cast<int*>(std::aligned_alloc(sizeof(int) * 16, sizeof(int) * 16));
+                _mm512_store_epi32(acc, a);
+                for (int i = 0; i < 16; i++) result += acc[i];
+                free(acc);
+                while (it != this->pointers.end()) result += (it++)->second->size();
+#elif __AVX2__
+                __m256i a = _mm256_set1_epi32(0);
+                for (auto i = 0; i < this->pointers.size() - 8; i+=8)
+                {
+                    const auto s0 = (it++)->second->size();
+                    const auto s1 = (it++)->second->size();
+                    const auto s2 = (it++)->second->size();
+                    const auto s3 = (it++)->second->size();
+                    const auto s4 = (it++)->second->size();
+                    const auto s5 = (it++)->second->size();
+                    const auto s6 = (it++)->second->size();
+                    const auto s7 = (it++)->second->size();
+                    __m256i b = _mm256_set_epi32(s7, s6, s5, s4, s3, s2, s1, s0);
+                    a = _mm256_add_epi32(a, b);
+                }
+                int acc[8];
+                __m256i mask = _mm256_set1_epi32(0xffffffff);
+                _mm256_maskstore_epi32(acc, mask, a);
+                result = acc[0] + acc[1] + acc[2] + acc[3] + acc[4] + acc[5] + acc[6] + acc[7];
+                while (it != this->pointers.end()) result += (it++)->second->size();
+#else
+                while (it != this->pointers.end()) result += (it++)->second->size();
+#endif
+                return result;
+            }
+            virtual size_t GetSizeOf(typename orthogonal_linked_list::LinkedCoordinate<3, orthogonal_linked_octree::OctreeNode<TPoint>>::base_coord_col const& c) {
+                if (!orthogonal_linked_list::LinkedCoordinate<3, orthogonal_linked_octree::OctreeNode<TPoint>>::exists(c)) return 0;
+                return this->get(c)->size();
+            }
+            virtual double GetReciprocalOfSize(typename orthogonal_linked_list::LinkedCoordinate<3, orthogonal_linked_octree::OctreeNode<TPoint>>::base_coord_col const& c) {
+                const auto r = this->GetSizeOf(c);
+                if (r == 0) return NAN;
+                return 1 / static_cast<double>(r);
             }
         protected:
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.

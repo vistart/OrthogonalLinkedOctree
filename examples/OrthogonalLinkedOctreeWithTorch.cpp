@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
                std::make_shared<vistart::orthogonal_linked_octree_with_torch::LinkedOctree<vistart::point_cloud_base_presentation::Point>>
                        (r1.transpose(0, 1), total);
        unsigned int count = 0;
+       unsigned int cout_count = 0;
        for (unsigned int a = 0; a < pow(2, total); a++)
            for (unsigned int b = 0; b < pow(2, total); b++)
                for (unsigned int c = 0; c < pow(2, total); c++)
@@ -44,10 +45,13 @@ int main(int argc, char* argv[])
                    if (p) {
                        //std::cout << "(" << c2[0] << "," << c2[1] << "," << c2[2] << "): " << p->size() << std::endl;
                        count++;
+                       if (cout_count < 10) {
+                           std::cout << "reciprocal: " << octree->GetReciprocalOfSize(c2) << std::endl;
+                           cout_count++;
+                       }
                    }
                }
-       std::cout << count << std::endl;
-       //std::cout << octree->GetAllSizes() << std::endl;
+       std::cout << count << " | size:" << octree->GetAllSizes() << std::endl;
    }
 
 #ifdef _DEBUG
