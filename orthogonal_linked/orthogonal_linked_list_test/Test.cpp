@@ -3055,16 +3055,16 @@ namespace vistart
                          );
             }
         }
-        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DBatchInLineInDepth4)
+        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DBatchInLineInDepth16)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
             srand((unsigned) time(NULL));
-            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 4));
+            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 16));
 
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -3081,16 +3081,16 @@ namespace vistart
                 );
             }
         }
-        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DBatchInLineInDepth4)
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DBatchInLineInDepth16)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
             srand((unsigned) time(NULL));
-            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 4));
+            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 16));
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
