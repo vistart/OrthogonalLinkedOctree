@@ -14,6 +14,8 @@
 #include "Coordinate.h"
 #include "LinkedCoordinate.h"
 #include <torch/torch.h>
+#include <stdlib.h>
+#include <time.h>
 
 namespace vistart
 {
@@ -3051,6 +3053,58 @@ namespace vistart
                          static_cast<unsigned int>(c2[i][1].item().toInt()),
                          static_cast<unsigned int>(c2[i][2].item().toInt())}
                          );
+            }
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkCoordinate3DBatchInLineInDepth4)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates256 coords1;
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            torch::manual_seed(2);
+            RandomCoordinates256 coords2;
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            srand((unsigned) time(NULL));
+            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 4));
+
+            Coordinate3DwithCoordinate3DFixture space;
+            for (int i = 0; i < coords1.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                        coords1.coords[i][0].item().toDouble(),
+                        coords1.coords[i][1].item().toDouble(),
+                        coords1.coords[i][2].item().toDouble()};
+                space.c->set(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                static_cast<unsigned int>(c1[i][1].item().toInt()),
+                Coordinate3},
+                std::make_shared<std::vector<double>>(t)
+                );
+            }
+        }
+        BOOST_AUTO_TEST_CASE(TestBenchmarkLinkedCoordinate3DBatchInLineInDepth4)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates256 coords1;
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            torch::manual_seed(2);
+            RandomCoordinates256 coords2;
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            srand((unsigned) time(NULL));
+            const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 4));
+
+            LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            for (int i = 0; i < coords1.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                        coords1.coords[i][0].item().toDouble(),
+                        coords1.coords[i][1].item().toDouble(),
+                        coords1.coords[i][2].item().toDouble()};
+                space.c->set(
+                {static_cast<unsigned int>(c1[i][0].item().toInt()),
+                static_cast<unsigned int>(c1[i][1].item().toInt()),
+                Coordinate3},
+                std::make_shared<std::vector<double>>(t)
+                );
             }
         }
 		BOOST_AUTO_TEST_SUITE_END()
