@@ -8,7 +8,7 @@ if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
     execute_process(COMMAND cat /etc/issue OUTPUT_VARIABLE issue_ov)
     message(STATUS ${issue_ov})
     # 工具链和 Python 可执行路径均为默认。请依据您自己的实际情况进行修改。
-    set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    # set(CMAKE_TOOLCHAIN_FILE ~/Projects/vcpkg/scripts/buildsystems/vcpkg.cmake)
     set(PYTHON_EXECUTABLE /usr/bin/python3)
     # 只生成地址无关代码
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
