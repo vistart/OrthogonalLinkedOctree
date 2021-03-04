@@ -145,6 +145,9 @@ namespace vistart
                 for (int i = 0; i < 16; i++) result += acc[i];
                 free(acc);
                 while (it != this->pointers.end()) result += (it++)->second->size();
+#ifdef _DEBUG
+                std::cout << "The result was computed using AVX512F instructions." << std::endl;
+#endif
 #elif __AVX2__
                 __m256i a = _mm256_set1_epi32(0);
                 for (auto i = 0; i < this->pointers.size() - 8; i+=8)
@@ -165,6 +168,9 @@ namespace vistart
                 _mm256_maskstore_epi32(acc, mask, a);
                 result = acc[0] + acc[1] + acc[2] + acc[3] + acc[4] + acc[5] + acc[6] + acc[7];
                 while (it != this->pointers.end()) result += (it++)->second->size();
+#ifdef _DEBUG
+                std::cout << "The result was computed using AVX2 instructions." << std::endl;
+#endif
 #else
                 while (it != this->pointers.end()) result += (it++)->second->size();
 #endif
