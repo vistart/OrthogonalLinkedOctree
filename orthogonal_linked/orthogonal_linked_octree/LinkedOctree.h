@@ -29,6 +29,9 @@
 #ifdef __GNUC__
 #include <stdexcept>
 #endif
+#ifdef _DEBUG
+#include <chrono>
+#endif
 
 namespace vistart
 {
@@ -80,6 +83,9 @@ namespace vistart
                 auto points = point_list->GetPoints();
 #pragma region Insert Point into Octree
                 std::cout << "Inserting all points into Octree:" << std::endl;
+#ifdef _DEBUG
+                const std::chrono::steady_clock::time_point time_start = std::chrono::steady_clock::now();
+#endif
                 for (auto i = 0; i < points->size(); i++) {
                     auto& point = (*points)[i];
                     const auto& node_coordinate = find_node_coordinate(point, middle_point, max_range, depth, leaf_width);
@@ -94,6 +100,11 @@ namespace vistart
                         std::cout << i + 1 << " points are inserted." << std::endl;
                     }
                 }
+#ifdef _DEBUG
+                const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
+                const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start);
+                std::cout << "Time elapsed of inserting all points: " << duration.count() << " s" << std::endl;
+#endif
                 std::cout << "All(" << points->size() << ") points are inserted." << std::endl;
 #pragma endregion
 #ifdef _DEBUG
