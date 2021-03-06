@@ -112,9 +112,9 @@ namespace vistart
                 print_nodes_stats();
 
                 auto& first_point = (*points)[0];
-                std::cout << *first_point << std::endl;
+                std::cout << "The first point :" << *first_point << std::endl;
                 first_point->offset(leaf_width / 3, 0, 0);
-                std::cout << *first_point << std::endl;
+                std::cout << "The first point (offsetted) :" << *first_point << std::endl;
 #endif
             }
             ~LinkedOctree() = default;
