@@ -232,7 +232,7 @@ namespace vistart
                         ++iterator->second;
                     }
                 }
-                std::cout << "Nodes: " << this->pointers.size() << ", Depth: " << (int)depth << ", Average Density: " << (float)count / this->pointers.size() << std::endl;
+                std::cout << "Nodes: " << this->pointers.size() << ", Depth: " << (int)depth << ", Average Density: " << (float)count / this->pointers.size() << ", Valid Voxel Density: " << (float) this->pointers.size() / pow(2, depth * 3) * 100 << " %" << std::endl;
 
                 std::cout << "Number of nodes containing # point(s):" << std::endl;
                 for (auto& c : count_per_node)
