@@ -95,10 +95,12 @@ namespace vistart
                     {
                         std::cout << "(" << node_coordinate[0] << ", " << node_coordinate[1] << ", " << node_coordinate[2]  << ")" << ":" << std::endl;
                     }
+#ifdef _DEBUG
                     if (i % 10000 == 9999)
                     {
                         std::cout << i + 1 << " points are inserted." << std::endl;
                     }
+#endif
                 }
 #ifdef _DEBUG
                 const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
@@ -112,9 +114,9 @@ namespace vistart
                 print_nodes_stats();
 
                 auto& first_point = (*points)[0];
-                std::cout << "The first point :" << *first_point << std::endl;
+                std::cout << "The first point: " << *first_point;
                 first_point->offset(leaf_width / 3, 0, 0);
-                std::cout << "The first point (offsetted) :" << *first_point << std::endl;
+                std::cout << " | X-coord with 1/3 node width offset: " << *first_point << std::endl;
 #endif
             }
             ~LinkedOctree() = default;
@@ -280,7 +282,7 @@ namespace vistart
                 const auto y_max = max_element(begin, end, comp_y);
                 const auto z_min = min_element(begin, end, comp_z);
                 const auto z_max = max_element(begin, end, comp_z);
-#ifdef _DEBUG
+
                 std::cout << std::fixed;
                 std::cout << "X-axis:" << "[" << std::setw(8) << std::setprecision(8) << std::distance(begin, x_min) << "]" << std::setw(11) << (**x_min).X() << " to "
                           << std::setw(0) << "[" << std::setw(8) << std::distance(begin, x_max) << "]" << std::setw(11) << (**x_max).X() << std::endl;
@@ -288,8 +290,7 @@ namespace vistart
                           << std::setw(0) << "[" << std::setw(8) << std::distance(begin, y_max) << "]" << std::setw(11) << (**y_max).Y() << std::endl;
                 std::cout << "Z-axis:" << "[" << std::setw(8) << std::setprecision(8) << std::distance(begin, z_min) << "]" << std::setw(11) << (**z_min).Z() << " to "
                           << std::setw(0) << "[" << std::setw(8) << std::distance(begin, z_max) << "]" << std::setw(11) << (**z_max).Z() << std::endl;
-#endif
-#ifdef _DEBUG
+
                 const auto x_range = (**x_max).X() - (**x_min).X();
                 const auto y_range = (**y_max).Y() - (**y_min).Y();
                 const auto z_range = (**z_max).Z() - (**z_min).Z();
@@ -299,11 +300,9 @@ namespace vistart
                 std::cout << "X-axis range: " << std::setprecision(8) << x_range << " middle point: " << x_mid << std::endl;
                 std::cout << "Y-axis range: " << std::setprecision(8) << y_range << " middle point: " << y_mid << std::endl;
                 std::cout << "Z-axis range: " << std::setprecision(8) << z_range << " middle point: " << z_mid << std::endl;
-#endif
-#ifdef _DEBUG
+
                 const auto max_range = std::max(x_range, std::max(y_range, z_range));
                 std::cout << "Max range: " << std::setprecision(8) << max_range << std::endl;
-#endif
                 return std::make_tuple(std::make_tuple((**x_min).X(), (**x_max).X()), std::make_tuple((**y_min).Y(), (**y_max).Y()), std::make_tuple((**z_min).Z(), (**z_max).Z()));
             }
 
