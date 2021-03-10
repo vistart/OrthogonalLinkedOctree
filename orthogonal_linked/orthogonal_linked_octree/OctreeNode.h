@@ -26,8 +26,8 @@ namespace vistart
         public:
             OctreeNode() = default;
             /**
-             *
-             * @param point the pointer to the point to be inserted.
+             * Initialize OctreeNode with a point.
+             * @param point the pointer to the initial point.
              */
             OctreeNode(std::shared_ptr<T> point)
             {
@@ -35,23 +35,47 @@ namespace vistart
                     return;
                 *this << point;
             }
+            /**
+             * Initialize OctreeNode with coordinate and depth and a point.
+             * You should ensure the point be fallen into the current node yourself.
+             * @param X
+             * @param Y
+             * @param Z
+             * @param depth
+             * @param point
+             */
             OctreeNode(unsigned int X, unsigned int Y, unsigned int Z, unsigned char depth, std::shared_ptr<T> point = nullptr)
             {
                 NodeCoordinate c(X, Y, Z, depth);
                 OctreeNode(c, point);
             }
+            /**
+             * Initialize OctreeNode with a set of points.
+             * @param points
+             */
             OctreeNode(std::unordered_set<std::shared_ptr<T>> const& points)
             {
                 this->points = points;
             }
             virtual ~OctreeNode() = default;
 
+            /**
+             * Insert a point.
+             * @param point
+             * @return
+             */
             OctreeNode<T>& operator<<(std::shared_ptr<T> point)
             {
                 points.emplace(point);
                 return *this;
             }
 
+            /**
+             * Output all the points contained in a OctreeNode.
+             * @param stream
+             * @param node
+             * @return
+             */
             friend std::ostream& operator<<(std::ostream& stream, OctreeNode const& node)
             {
                 for (auto& p : node.GetPoints())
@@ -62,7 +86,7 @@ namespace vistart
             }
 
             /**
-             * Return the points.
+             * Return all the points.
              * Note: If you want to get the size of this node, please access [[size()]] method instead.
              * @return points.
              */
@@ -80,6 +104,10 @@ namespace vistart
                 return points.size();
             }
         protected:
+            /**
+             * the unordered set contained all the points.
+             * You shouldn't access this property directly, unless you know the consequences of doing so.
+             */
             std::unordered_set<std::shared_ptr<T>> points;
         };
 	}

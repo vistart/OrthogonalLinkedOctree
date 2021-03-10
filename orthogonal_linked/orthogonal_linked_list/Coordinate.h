@@ -71,8 +71,8 @@ namespace vistart
 			{
 				/**
 				 * 散列值类型固定为 size_t。此类型位数与操作系统和 CPU 位宽有关。
-				 * 在 Windows x64 操作系统中，size_t 就是“无符号 64 位”，
-				 * 即此时 size_t 代表的散列值有 64 位。
+				 * 在 Windows x64 操作系统中，size_t 就是“long unsigned int”，
+				 * 即此时 size_t 代表的散列值是 32 位或 64 位，与字长、编译器和操作系统有关。
 				 * 
 				 * 这 64 位要平均分配给每个维度的坐标值。具体分配规则如下：
 				 * 如果维度数能被 64 整除，则每个维度的宽度就是整除后的商。
@@ -90,8 +90,8 @@ namespace vistart
 				 */
 				size_t operator()(coordinates_type const& c) const
 				{
-					const auto type_length = sizeof(size_t) * 8;
-					const auto dimension_length = type_length / D;
+					const auto type_length = sizeof(size_t) * 8; // 计算 size_t 所占位宽。
+					const auto dimension_length = type_length / D; // 计算每个维度可占用的位宽。
 
 					// 设置掩码。掩码长度与维度位宽有关。
 					// 如 D = 2 （二维）且键长度为 64 位时，每维度分得的宽度为 32 位，此时掩码为 0xFFFFFFFF。
