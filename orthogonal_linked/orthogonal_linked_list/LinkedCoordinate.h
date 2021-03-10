@@ -10,6 +10,7 @@
 #pragma once
 #ifndef __LINKED_COORDINATE_H__
 #define __LINKED_COORDINATE_H__
+#include <vector>
 #include "Coordinate.h"
 #include "InvalidLinkedCoordinateHeadAndTail.h"
 
@@ -31,7 +32,7 @@ namespace vistart
 		 * @param T 定义与基类相同。
 		 */
 		template<unsigned char D, typename T>
-		class LinkedCoordinate : public Coordinate<D, T>
+	    class LinkedCoordinate : public Coordinate<D, T>, public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 		public:
 
@@ -112,6 +113,52 @@ namespace vistart
 			 * 此处采用“无序映射”是因为单个维度坐标范围可能会很大，而有效元素很少。如果存储全部范围，则会造成巨大空间浪费，相比无序映射带来的访问时间效率提升却不明显。
 			 */
 			typedef std::unordered_map<base_coord_col, head_and_tail, struct Coordinate<D, T>::Hash> head_and_tail_in_dimension;
+#pragma endregion
+#pragma region 迭代器
+			LinkedCoordinate& operator=(const LinkedCoordinate &iter)
+            {
+			    this->adjacent_pointers = iter.adjacent_pointers;
+			    this->coordinates_pointers = iter.coordinates_pointers;
+            }
+            bool operator==(const LinkedCoordinate &iter)
+            {
+			    if (this->adjacent_pointers.size() != iter.adjacent_pointers.size() || this->coordinates_pointers.size() != iter.coordinates_pointers.size())
+			        return false;
+                auto iter_adj = iter.adjacent_pointers.begin();
+                auto this_adj = this->adjacent_pointers.begin();
+                for (int i = 0; i < this->adjacent_pointers.size(); i++)
+                {
+                    if (*iter_adj != *this_adj) return false;
+                    iter_adj++;
+                    this_adj++;
+                }
+                auto iter_coord = iter.coordinates_pointers.begin();
+                auto this_coord = this->coordinates_pointers.begin();
+                for (int i = 0; i < this->coordinates_pointers.size(); i++)
+                {
+                    if (*iter_coord != *this_coord) return false;
+                    iter_coord++;
+                    this_coord++;
+                }
+                return true;
+            }
+            bool operator!=(const LinkedCoordinate& iter)
+            {
+			    return !(this == iter);
+            }
+            LinkedCoordinate& operator++()
+            {
+
+            }
+            LinkedCoordinate operator++(int i)
+            {
+
+            }
+            T& operator*()
+            {
+
+            }
+
 #pragma endregion
 
 #pragma endregion
@@ -747,7 +794,8 @@ namespace vistart
 #pragma endregion
 
 		private:
-
+#pragma region 迭代器指针
+#pragma endregion
 		};
 
 	}
