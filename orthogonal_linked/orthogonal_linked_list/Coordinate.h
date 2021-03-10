@@ -188,7 +188,7 @@ namespace vistart
 			 * @return 若坐标维度与空间维度一致，则返回 true。
 			 * @throws CoordinateDimensionMismatchException 若坐标维度与空间维度不一致，则抛出此异常。
 			 */
-			bool check_coordinates_dimension_size(coordinates_type const& c) const
+			static bool check_coordinates_dimension_size(coordinates_type const& c)
 			{
 				if (c.size() != D)
 				{
