@@ -35,8 +35,16 @@ namespace vistart
 	    class LinkedCoordinate : public Coordinate<D, T>, public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 		public:
-
+		    /**
+		     * 坐标值的定义。
+		     * 目前坐标值的实质是 unsigned int，即坐标值的支持范围为 0 ~ 2^32 - 1 内的整数。
+		     */
 			typedef typename vistart::orthogonal_linked_list::Coordinate<D, T>::coordinate_type base_coord;
+			/**
+			 * 坐标的定义。
+			 * 目前坐标的实质是 std::vector<unsigned int>，即坐标为 unsigned int 数组。
+			 * 注意：定义并不限制数组元素的数量必须与 D 一致，因此，在使用此定义时，你需要自行保证数组元素数量与 D 一致。
+			 */
 			typedef typename vistart::orthogonal_linked_list::Coordinate<D, T>::coordinates_type base_coord_col;
 
 			/**
@@ -96,9 +104,13 @@ namespace vistart
 #pragma region 头尾指针定义
 			/**
 			 * 头尾指针定义。
-			 * 共享指针指向头或尾的坐标（索引）。
+			 * 共享指针指向头或尾的坐标（索引）。如果指向 nullptr，则代表当前维度没有元素。
 			 */
 			typedef std::shared_ptr<base_coord_col> head_or_tail_ptr;
+			/**
+			 * 头尾指针组。
+			 * 此结构体包含指向头坐标的指针和指向尾坐标的指针。
+			 */
 			typedef struct
 			{
 				head_or_tail_ptr head; // *head 即为当前维度当前坐标区间内第一个元素。如果为 nullptr，代表此坐标区间为空。
@@ -110,7 +122,9 @@ namespace vistart
 #pragma region 单维度头尾指针组定义
 			/**
 			 * 当前坐标维度所有头尾节点映射。
-			 * 此处采用“无序映射”是因为单个维度坐标范围可能会很大，而有效元素很少。如果存储全部范围，则会造成巨大空间浪费，相比无序映射带来的访问时间效率提升却不明显。
+			 * 此处采用“无序映射”是因为单个维度坐标范围可能会很大，而有效元素很少。
+			 * 如果存储全部范围，则会造成巨大空间浪费，相比无序映射带来的访问时间效率提升却不明显。
+			 *
 			 */
 			typedef std::unordered_map<base_coord_col, head_and_tail, struct Coordinate<D, T>::Hash> head_and_tail_in_dimension;
 #pragma endregion
@@ -119,6 +133,7 @@ namespace vistart
             {
 			    this->adjacent_pointers = iter.adjacent_pointers;
 			    this->coordinates_pointers = iter.coordinates_pointers;
+			    this->_iterator_pointer = iter._iterator_pointer;
             }
             bool operator==(const LinkedCoordinate &iter)
             {
@@ -146,13 +161,24 @@ namespace vistart
             {
 			    return !(this == iter);
             }
+            /**
+             * 前缀++
+             * @return
+             */
             LinkedCoordinate& operator++()
             {
-
+                return *this;
             }
+            /**
+             * 后缀++
+             * @param i
+             * @return
+             */
             LinkedCoordinate operator++(int i)
             {
+                LinkedCoordinate tmp = *this;
 
+                return tmp;
             }
             T& operator*()
             {
@@ -275,6 +301,7 @@ namespace vistart
 			/**
 			 * 所有维度头尾指针组
 			 * 这个旨在辅助遍历，不与坐标-近邻指针映射合并。
+			 * 当前数据结构的实质是保存每个维度头尾指针的向量容器，容器大小应当与 D 相同，但此处定义并不检查，因此需要你在使用时主动保证。
 			 */
 			std::vector<head_and_tail_in_dimension> head_and_tail_in_all_dimensions;
 #pragma endregion
@@ -282,6 +309,7 @@ namespace vistart
 			/**
 			 * 初始化所有维度头尾指针。
 			 * 所有头尾指针的头和尾均指向空。
+			 * 头尾指针组是保存每个维度头尾指针的容器，即头尾指针组的元素数量应当与 D 相同。
 			 */
 			void init_head_and_tail_in_all_dimensions()
 			{
@@ -353,6 +381,8 @@ namespace vistart
 #pragma region 判断头尾节点是否存在
 			/**
 			 * 判断维度 d 坐标 i 的头尾指针是否存在。
+			 * 假设维度 d = 0，坐标 i 为 { 3, 4, 5 }。则首先将 i[d] 设为 0，即新的 i 为 { 0, 4, 5 }。
+			 * 然后在第 0 个头尾指针元素（unordered_map）中，查找 { 0, 4, 5 } 是否存在，即是否指向了尾部。
 			 *
 			 * @param d 维度。
 			 * @param c 坐标。注意，此坐标值传入后会将当前维度索引置零，因此调用此函数前无须处理此维度。
@@ -406,7 +436,8 @@ namespace vistart
 #pragma region 判断元素相对头尾节点的位置
 			/**
 			 * 判断当前元素是否为当前维度第一个。
-			 * 注意：get_adjacents(c) 方法有返回 nullptr 的风险，而当前方法并不检查，因此你需要在使用此方法前自行检查 get_adjacents(c) 返回值是否为 nullptr，以免出现无权访问问题。
+			 * 注意：[[get_adjacents()]] 方法有返回 nullptr 的风险，而当前方法并不检查，
+			 * 因此你需要在使用此方法前自行检查 get_adjacents(c) 返回值是否为 nullptr，以免出现无权访问问题。
 			 *
 			 * @param c 坐标。
 			 * @param d 维度。
@@ -420,7 +451,8 @@ namespace vistart
 
 			/**
 			 * 判断当前元素是否为当前维度最后一个。
-			 * 注意：get_adjacents(c) 方法有返回 nullptr 的风险，而当前方法并不检查，因此你需要在使用此方法前自行检查 get_adjacents(c) 返回值是否为 nullptr，以免出现无权访问问题。
+			 * 注意：[[get_adjacents()]] 方法有返回 nullptr 的风险，而当前方法并不检查，
+			 * 因此你需要在使用此方法前自行检查 get_adjacents(c) 返回值是否为 nullptr，以免出现无权访问问题。
 			 *
 			 * @param c 坐标。
 			 * @param d 维度。
@@ -795,6 +827,15 @@ namespace vistart
 
 		private:
 #pragma region 迭代器指针
+		    typename Coordinate<D, T>::coordinates_type _iterator_pointer;
+			void _iterator_pointer_begin()
+            {
+			    this->head_and_tail_in_all_dimensions;
+            }
+			void _iterator_pointer_next()
+            {
+
+            }
 #pragma endregion
 		};
 
