@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include <iterator>
 #include "Coordinate.h"
 #include "InvalidLinkedCoordinateHeadAndTail.h"
 
@@ -34,7 +35,7 @@ namespace vistart
 		 * @param T 定义与基类相同。
 		 */
 		template<unsigned char D, typename T>
-	    class LinkedCoordinate : public Coordinate<D, T>, public std::iterator<std::bidirectional_iterator_tag, T>
+	    class LinkedCoordinate : public Coordinate<D, T>
 		{
 		public:
 		    /**
@@ -57,38 +58,17 @@ namespace vistart
 			{
 				this->init_head_and_tail_in_all_dimensions();
 			}
+			LinkedCoordinate(const LinkedCoordinate& c)
+            {
+			    this->head_and_tail_in_all_dimensions = c.head_and_tail_in_all_dimensions;
+			    this->adjacent_pointers = c.adjacent_pointers;
+			    this->coordinates_pointers = c.coordinates_pointers;
+			    this->pointers = c.pointers;
+#ifdef _DEBUG
+			    std::cout << "Linked Coordinate Copied." << std::endl;
+#endif
+            }
 			~LinkedCoordinate() override = default;
-#pragma region 迭代器指针
-		    std::shared_ptr<typename Coordinate<D, T>::coordinates_type> _iterator_pointer = nullptr;
-		    unsigned int _iterator_pointer_direction = 0;
-		    unsigned int _iterator_pointer_current_dimension = D - 1;
-            void _iterator_pointer_begin()
-            {
-                const auto& di = this->head_and_tail_in_all_dimensions[this->_iterator_pointer_direction];
-                const auto& di_first = di.begin();
-                if (di_first == di.end()) return;
-                this->_iterator_pointer = std::make_shared<typename Coordinate<D, T>::coordinates_type>(*(di_first->second.head));
-            }
-            void _iterator_pointer_next()
-            {
-                if (this->_iterator_pointer == nullptr) return;
-                const auto& coord_ptr = this->_iterator_pointer;
-                std::cout << *coord_ptr << std::endl;
-                const auto& coord_next_ptr = get_next_in_dimension(*coord_ptr, this->_iterator_pointer_current_dimension);
-                std::cout << coord_next_ptr << std::endl;
-                if (coord_next_ptr == nullptr)
-                {
-                    this->_iterator_pointer_current_dimension++;
-                    if (this->_iterator_pointer_current_dimension == this->_iterator_pointer_direction) this->_iterator_pointer_current_dimension++;
-                    if (this->_iterator_pointer_current_dimension >= D) return; // 已经到头了。
-                }
-                //this->_iterator_pointer = std::make_shared<typename Coordinate<D, T>::coordinates_type>(*coord_next_ptr);
-            }
-            void _iterator_pointer_prev()
-            {
-
-            }
-#pragma endregion
 #pragma region 定义
 
 #pragma region 近邻指针定义
@@ -162,62 +142,30 @@ namespace vistart
 #pragma endregion
 
 #pragma region 迭代器
-			LinkedCoordinate& operator=(const LinkedCoordinate &iter)
-            {
-			    this->adjacent_pointers = iter.adjacent_pointers;
-			    this->coordinates_pointers = iter.coordinates_pointers;
-			    this->_iterator_pointer = iter._iterator_pointer;
-            }
-            bool operator==(const LinkedCoordinate &iter)
-            {
-			    if (this->adjacent_pointers.size() != iter.adjacent_pointers.size() || this->coordinates_pointers.size() != iter.coordinates_pointers.size())
-			        return false;
-                auto iter_adj = iter.adjacent_pointers.begin();
-                auto this_adj = this->adjacent_pointers.begin();
-                for (int i = 0; i < this->adjacent_pointers.size(); i++)
-                {
-                    if (*iter_adj != *this_adj) return false;
-                    iter_adj++;
-                    this_adj++;
-                }
-                auto iter_coord = iter.coordinates_pointers.begin();
-                auto this_coord = this->coordinates_pointers.begin();
-                for (int i = 0; i < this->coordinates_pointers.size(); i++)
-                {
-                    if (*iter_coord != *this_coord) return false;
-                    iter_coord++;
-                    this_coord++;
-                }
-                return true;
-            }
-            bool operator!=(const LinkedCoordinate& iter)
-            {
-			    return !(this == iter);
-            }
-            /**
-             * 前缀++
-             * @return
-             */
-            LinkedCoordinate& operator++()
-            {
-                return *this;
-            }
-            /**
-             * 后缀++
-             * @param i
-             * @return
-             */
-            LinkedCoordinate operator++(int i)
-            {
-                LinkedCoordinate tmp = *this;
-
-                return tmp;
-            }
-            T& operator*()
-            {
-
-            }
-
+			struct iterator{
+			    using value_type = typename LinkedCoordinate<D, T>::head_and_tail_in_dimension::iterator;
+			    iterator(value_type iter) : m_ptr(iter) {}
+                value_type operator*() const {return m_ptr;}
+			    value_type& operator->() {return m_ptr;}
+			    iterator& operator++() {m_ptr++; return *this;}
+			    iterator operator++(int) {iterator tmp = *this; m_ptr++; return tmp;}
+			    iterator& operator--() {m_ptr--; return *this;}
+			    iterator operator--(int) {iterator tmp = *this; m_ptr--; return tmp;}
+                friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; };
+                friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; };
+            private:
+                value_type m_ptr;
+			};
+			iterator begin() {
+			    auto begin = this->head_and_tail_in_all_dimensions[0].begin();
+			    //std::cout << "begin address: " << &begin << std::endl;
+			    return iterator(begin);
+			}
+			iterator end() {
+			    auto end = this->head_and_tail_in_all_dimensions[0].end();
+                //std::cout << "end address: " << &end << std::endl;
+			    return iterator(end);
+			}
 #pragma endregion
 
 #pragma endregion

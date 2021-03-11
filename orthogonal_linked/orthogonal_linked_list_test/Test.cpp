@@ -3132,12 +3132,21 @@ namespace vistart
                     std::make_shared<std::vector<double>>(t)
                 );
             }
-space.c->_iterator_pointer_begin();
-            std::cout << *(space.c->_iterator_pointer) << std::endl;
-space.c->_iterator_pointer_next();
-std::cout << *(space.c->_iterator_pointer) << std::endl;
+            auto __debug_begin = space.c->__debug_head_and_tail_in_all_dimensions[0].begin();
+            std::cout << __debug_begin->second.head << std::endl;
+            LinkedCoordinate<3,std::vector<double>>::iterator iter = space.c->begin();
+            std::cout << (*iter)->second.head << std::endl;
+            unsigned int count = 0;
+            while (iter != space.c->end())
+            {
+                //std::cout << (*iter)->second.head << std::endl;
+                if (__debug_begin->second.head != (*iter)->second.head) std::cout << __debug_begin->second.head << " != " << (*iter)->second.head << std::endl;
+                iter++;
+                __debug_begin++;
+                count++;
+            }
+            std::cout << "Count: " << count << std::endl;
         }
         BOOST_AUTO_TEST_SUITE_END()
 	}
 }
-
