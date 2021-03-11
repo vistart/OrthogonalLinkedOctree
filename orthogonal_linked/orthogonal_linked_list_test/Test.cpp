@@ -2192,6 +2192,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
         BOOST_AUTO_TEST_SUITE_END()
+        /*
         BOOST_AUTO_TEST_SUITE(BenchmarkCoordinate3D)
 		//深度为4
 		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
@@ -3107,8 +3108,36 @@ namespace vistart
                 );
             }
         }
-		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE_END()*/
+        BOOST_AUTO_TEST_SUITE(TestLinkedCoordinateIterator)
+        BOOST_AUTO_TEST_CASE(TestLinkedCoordinateIteratorInit)
+        {
+            torch::manual_seed(1);
+            RandomCoordinates262144 coords1;
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12));
 
+            LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            for (int i = 0; i < coords1.coords.size(0); i++)
+            {
+                std::vector<double> t {
+                    coords1.coords[i][0].item().toDouble(),
+                    coords1.coords[i][1].item().toDouble(),
+                    coords1.coords[i][2].item().toDouble()
+                };
+                space.c->set({
+                        static_cast<unsigned int>(c1[i][0].item().toInt()),
+                        static_cast<unsigned int>(c1[i][1].item().toInt()),
+                        static_cast<unsigned int>(c1[i][2].item().toInt())
+                    },
+                    std::make_shared<std::vector<double>>(t)
+                );
+            }
+space.c->_iterator_pointer_begin();
+            std::cout << *(space.c->_iterator_pointer) << std::endl;
+space.c->_iterator_pointer_next();
+std::cout << *(space.c->_iterator_pointer) << std::endl;
+        }
+        BOOST_AUTO_TEST_SUITE_END()
 	}
 }
 

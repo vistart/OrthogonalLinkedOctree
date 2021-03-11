@@ -11,6 +11,8 @@
 #ifndef __LINKED_COORDINATE_H__
 #define __LINKED_COORDINATE_H__
 #include <vector>
+#include <iostream>
+#include <map>
 #include "Coordinate.h"
 #include "InvalidLinkedCoordinateHeadAndTail.h"
 
@@ -56,6 +58,37 @@ namespace vistart
 				this->init_head_and_tail_in_all_dimensions();
 			}
 			~LinkedCoordinate() override = default;
+#pragma region 迭代器指针
+		    std::shared_ptr<typename Coordinate<D, T>::coordinates_type> _iterator_pointer = nullptr;
+		    unsigned int _iterator_pointer_direction = 0;
+		    unsigned int _iterator_pointer_current_dimension = D - 1;
+            void _iterator_pointer_begin()
+            {
+                const auto& di = this->head_and_tail_in_all_dimensions[this->_iterator_pointer_direction];
+                const auto& di_first = di.begin();
+                if (di_first == di.end()) return;
+                this->_iterator_pointer = std::make_shared<typename Coordinate<D, T>::coordinates_type>(*(di_first->second.head));
+            }
+            void _iterator_pointer_next()
+            {
+                if (this->_iterator_pointer == nullptr) return;
+                const auto& coord_ptr = this->_iterator_pointer;
+                std::cout << *coord_ptr << std::endl;
+                const auto& coord_next_ptr = get_next_in_dimension(*coord_ptr, this->_iterator_pointer_current_dimension);
+                std::cout << coord_next_ptr << std::endl;
+                if (coord_next_ptr == nullptr)
+                {
+                    this->_iterator_pointer_current_dimension++;
+                    if (this->_iterator_pointer_current_dimension == this->_iterator_pointer_direction) this->_iterator_pointer_current_dimension++;
+                    if (this->_iterator_pointer_current_dimension >= D) return; // 已经到头了。
+                }
+                //this->_iterator_pointer = std::make_shared<typename Coordinate<D, T>::coordinates_type>(*coord_next_ptr);
+            }
+            void _iterator_pointer_prev()
+            {
+
+            }
+#pragma endregion
 #pragma region 定义
 
 #pragma region 近邻指针定义
@@ -122,12 +155,12 @@ namespace vistart
 #pragma region 单维度头尾指针组定义
 			/**
 			 * 当前坐标维度所有头尾节点映射。
-			 * 此处采用“无序映射”是因为单个维度坐标范围可能会很大，而有效元素很少。
+			 * 此处采用“有序映射”是因为单个维度坐标范围可能会很大，而有效元素很少，且方便按顺序遍历。
 			 * 如果存储全部范围，则会造成巨大空间浪费，相比无序映射带来的访问时间效率提升却不明显。
-			 *
 			 */
-			typedef std::unordered_map<base_coord_col, head_and_tail, struct Coordinate<D, T>::Hash> head_and_tail_in_dimension;
+			typedef std::map<base_coord_col, head_and_tail> head_and_tail_in_dimension;
 #pragma endregion
+
 #pragma region 迭代器
 			LinkedCoordinate& operator=(const LinkedCoordinate &iter)
             {
@@ -826,17 +859,6 @@ namespace vistart
 #pragma endregion
 
 		private:
-#pragma region 迭代器指针
-		    typename Coordinate<D, T>::coordinates_type _iterator_pointer;
-			void _iterator_pointer_begin()
-            {
-			    this->head_and_tail_in_all_dimensions;
-            }
-			void _iterator_pointer_next()
-            {
-
-            }
-#pragma endregion
 		};
 
 	}
