@@ -142,29 +142,113 @@ namespace vistart
 #pragma endregion
 
 #pragma region 迭代器
+            template<unsigned char __D, typename __T>
 			struct iterator{
-			    using value_type = typename LinkedCoordinate<D, T>::head_and_tail_in_dimension::iterator;
-			    iterator(value_type iter) : m_ptr(iter) {}
-                value_type operator*() const {return m_ptr;}
-			    value_type& operator->() {return m_ptr;}
-			    iterator& operator++() {m_ptr++; return *this;}
-			    iterator operator++(int) {iterator tmp = *this; m_ptr++; return tmp;}
-			    iterator& operator--() {m_ptr--; return *this;}
-			    iterator operator--(int) {iterator tmp = *this; m_ptr--; return tmp;}
-                friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; };
-                friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; };
+			    enum {BEGIN = 0, END = 1};
+			    using value_type = __T;
+                using origin = LinkedCoordinate<__D, __T>;
+			    using head_and_tail_iterator = typename origin::head_and_tail_in_dimension::iterator;
+			    using value_coordinate = typename origin::coordinates_type;
+			    iterator(origin* o, unsigned int d, unsigned int di = 0) : o_ptr(o), dimension(di) {
+			        //std::cout << "Iterator D: " << static_cast<unsigned int>(__D) << std::endl;
+			        if (d == BEGIN)
+                    {
+			            ht_iter = o_ptr->head_and_tail_in_all_dimensions[dimension].begin();
+			            c_ptr = ht_iter->second.head;
+			            //std::cout << "ht_iter_first: " << c_ptr << std::endl;
+                    }
+			        else
+                    {//std::cout<<"END"<<std::endl;
+			            ht_iter = o_ptr->head_and_tail_in_all_dimensions[dimension].end();
+                    }
+			    }
+                value_type operator*() {
+			        //std::cout << *c_ptr << std::endl;
+			        auto c = *(o_ptr->get(*c_ptr));
+			        return c;
+			    }
+			    value_type* operator->() {
+                    //if (!c_ptr) return nullptr;
+			        return o_ptr->get(*c_ptr);
+			    }
+			    // Prefix increment
+			    iterator& operator++() {
+			        //if (!c_ptr) return *this;
+			        auto next_ptr = o_ptr->get_next_in_dimension(*c_ptr, 0);
+			        if (next_ptr)
+                    {// 还有下一个
+                        //std::cout<< *c_ptr << " has next: "<<*next_ptr<<std::endl;
+			            c_ptr = next_ptr;
+			            return *this;
+                    }
+			        //std::cout<< *c_ptr << " is the last one.";
+                    ht_iter++;
+                    c_ptr = (ht_iter == o_ptr->head_and_tail_in_all_dimensions[dimension].end()) ? nullptr : ht_iter->second.head;
+                    //std::cout<<" The head of next dimension: " << *c_ptr << std::endl;
+			        return *this;
+			    }
+			    // Postfix increment
+			    iterator operator++(int) {
+			        iterator tmp = *this;
+                    //if (!c_ptr) return tmp;
+                    /*
+                    auto next_ptr = o_ptr->get_next_in_dimension(*c_ptr, 0);
+                    if (next_ptr)
+                    {// 还有下一个
+                        std::cout<< *c_ptr << " has next: "<<*next_ptr<<std::endl;
+                        c_ptr = next_ptr;
+                        return tmp;
+                    }std::cout<< *c_ptr << " is the last one."<<std::endl;
+			        tmp.ht_iter++;*/
+                    ++(*this);
+			        return tmp;
+			    }
+			    iterator& operator--() {
+			        //if (!c_ptr) return *this;
+                    auto prev_ptr = o_ptr->get_prev_in_dimension(*c_ptr, 0);
+                    if (prev_ptr)
+                    {// 还有前一个
+                        c_ptr = prev_ptr;
+                        return *this;
+                    }
+                    ht_iter--;
+                    c_ptr = ht_iter->second.head;
+                    return *this;
+			    }
+			    iterator operator--(int) {
+			        iterator tmp = *this;
+			        //if (!c_ptr) return tmp;
+			        /*
+                    auto prev_ptr = o_ptr->get_prev_in_dimension(*c_ptr, 0);
+                    if (prev_ptr)
+                    {// 还有前一个
+                        c_ptr = prev_ptr;
+                        return tmp;
+                    }
+			        tmp.ht_iter--;*/
+			        --(*this);
+			        return tmp;
+			    }
+                friend bool operator== (const iterator& a, const iterator& b) {
+			        return (a.ht_iter == b.ht_iter && a.c_ptr == b.c_ptr);
+			    };
+                friend bool operator!= (const iterator& a, const iterator& b) {
+                    return (a.ht_iter != b.ht_iter || a.c_ptr != b.c_ptr);
+                };
             private:
+			    head_and_tail_iterator ht_iter;
+                std::shared_ptr<value_coordinate> c_ptr;
+                origin* o_ptr;
                 value_type m_ptr;
+                typename origin::coordinate_type dimension = 0;
 			};
-			iterator begin() {
+			iterator<D, T> begin() {
 			    auto begin = this->head_and_tail_in_all_dimensions[0].begin();
-			    //std::cout << "begin address: " << &begin << std::endl;
-			    return iterator(begin);
+			    return iterator(this, iterator<D, T>::BEGIN);
 			}
-			iterator end() {
-			    auto end = this->head_and_tail_in_all_dimensions[0].end();
-                //std::cout << "end address: " << &end << std::endl;
-			    return iterator(end);
+			iterator<D, T> end() {
+                auto end = this->head_and_tail_in_all_dimensions[0].end();
+			    return iterator(this, iterator<D, T>::END);
 			}
 #pragma endregion
 

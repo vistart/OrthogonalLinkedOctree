@@ -3113,17 +3113,18 @@ namespace vistart
         BOOST_AUTO_TEST_CASE(TestLinkedCoordinateIteratorInit)
         {
             torch::manual_seed(1);
-            RandomCoordinates262144 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12));
+            RandomCoordinates256 coords1;
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
             {
                 std::vector<double> t {
-                    coords1.coords[i][0].item().toDouble(),
-                    coords1.coords[i][1].item().toDouble(),
-                    coords1.coords[i][2].item().toDouble()
+                        static_cast<double>(c1[i][0].item().toInt()),
+                        static_cast<double>(c1[i][1].item().toInt()),
+                        static_cast<double>(c1[i][2].item().toInt())
                 };
+                //std::cout<<t<<std::endl;
                 space.c->set({
                         static_cast<unsigned int>(c1[i][0].item().toInt()),
                         static_cast<unsigned int>(c1[i][1].item().toInt()),
@@ -3133,16 +3134,21 @@ namespace vistart
                 );
             }
             auto __debug_begin = space.c->__debug_head_and_tail_in_all_dimensions[0].begin();
-            std::cout << __debug_begin->second.head << std::endl;
-            LinkedCoordinate<3,std::vector<double>>::iterator iter = space.c->begin();
-            std::cout << (*iter)->second.head << std::endl;
+            //std::cout << __debug_begin->second.head << std::endl;
+            //std::cout << space.c->size() << std::endl;
+            //std::cout << "First (" << __debug_begin->first << "): head: " << *(__debug_begin->second.head) << " | Got: " << space.c->get(__debug_begin->first) << std::endl;
+            auto iter = space.c->begin();//std::cout<<typeid(*iter).name()<<std::endl;
+            //std::cout << "Space Coords: " << *iter << std::endl;
             unsigned int count = 0;
             while (iter != space.c->end())
             {
-                //std::cout << (*iter)->second.head << std::endl;
-                if (__debug_begin->second.head != (*iter)->second.head) std::cout << __debug_begin->second.head << " != " << (*iter)->second.head << std::endl;
+                //std::cout << (*iter).second.head << std::endl;
+                //if (__debug_begin->second.head != (*iter).second.head) std::cout << __debug_begin->second.head << " != " << (*iter).second.head << std::endl;
+                //if ((*iter).second.head != (*iter).second.tail)
+                //    std::cout << "Head: " << *((*iter).second.head) << " | Tail: " << *((*iter).second.tail) << std::endl;
+                std::cout << *iter << std::endl;
                 iter++;
-                __debug_begin++;
+                //__debug_begin++;
                 count++;
             }
             std::cout << "Count: " << count << std::endl;
