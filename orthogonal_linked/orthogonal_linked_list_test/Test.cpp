@@ -3119,6 +3119,7 @@ namespace vistart
             const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
+            const std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
             for (int i = 0; i < coords1.coords.size(0); i++)
             {
                 std::vector<double> t {
@@ -3133,20 +3134,24 @@ namespace vistart
                     },
                     std::make_shared<std::vector<double>>(t)
                 );
-                if (i % 100000 == 99999) std::cout << i + 1 << " inserted." << std::endl;
+                if (i % 100000 == 99999) {
+                    const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
+                    const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start1);
+                    std::cout << i + 1 << " inserted." << " Elapsed: " << duration.count() << " s" << std::endl;
+                }
             }
             auto iter = space.c->begin();
             unsigned int count = 0;
-            const std::chrono::steady_clock::time_point time_start = std::chrono::steady_clock::now();
+            const std::chrono::steady_clock::time_point time_start2 = std::chrono::steady_clock::now();
             while (iter != space.c->end())
             {
                 // std::cout << *iter << "(USE_COUNT: " << (*iter)->size() << ") :" << **iter << std::endl;
                 iter++;
                 count++;
             }
-            const std::chrono::steady_clock::time_point time_end_read_header = std::chrono::steady_clock::now();
-            const std::chrono::duration<double> duration_read_header = std::chrono::duration_cast<std::chrono::duration<double>>(time_end_read_header - time_start);
-std::cout << "Time elapsed of getting all sizes: " << duration_read_header.count() << " s" << std::endl;
+            const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start2);
+            std::cout << "Time elapsed of getting all sizes: " << duration.count() << " s" << std::endl;
             std::cout << "Count: " << count << std::endl;
         }
         BOOST_AUTO_TEST_SUITE_END()
