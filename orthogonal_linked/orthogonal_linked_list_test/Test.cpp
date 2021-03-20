@@ -16,6 +16,7 @@
 #include <torch/torch.h>
 #include <stdlib.h>
 #include <time.h>
+#include <chrono>
 
 namespace vistart
 {
@@ -174,6 +175,7 @@ namespace vistart
             const at::Tensor coords = at::rand({16777216, 3});
         };
 #pragma endregion
+
 		BOOST_AUTO_TEST_SUITE(TestCoordinate)
 			/**
 			* 此过程模拟实例化正交链表的过程。
@@ -2192,14 +2194,14 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
         BOOST_AUTO_TEST_SUITE_END()
-
+/*
         BOOST_AUTO_TEST_SUITE(BenchmarkCoordinate3D)
 		//深度为4
 		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
@@ -2232,7 +2234,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2271,7 +2273,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
@@ -2303,7 +2305,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2343,7 +2345,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates65536 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
@@ -2376,7 +2378,7 @@ namespace vistart
         {
 		    torch::manual_seed(1);
 		    RandomCoordinates65536 coords;
-		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8) - 1);
 		    Coordinate3DwithCoordinate3DFixture space;
 		    for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2416,7 +2418,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates65536 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             unsigned int count = 0;
             for (int i = 0; i < coords.coords.size(0); i++)
@@ -2448,7 +2450,7 @@ namespace vistart
         {
 		    torch::manual_seed(1);
 		    RandomCoordinates65536 coords;
-		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8));
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 8)), 0, pow(2, 8) - 1);
 		    LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
 		    for (int i = 0; i < coords.coords.size(0); i++)
 		    {
@@ -2487,7 +2489,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates262144 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2518,7 +2520,7 @@ namespace vistart
         {
 		    torch::manual_seed(1);
 		    RandomCoordinates262144 coords;
-		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 		    Coordinate3DwithCoordinate3DFixture space;
 		    for (int i = 0; i < coords.coords.size(0); i++)
 		    {
@@ -2557,7 +2559,7 @@ namespace vistart
         {
 		    torch::manual_seed(1);
 		    RandomCoordinates262144 coords;
-		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+		    const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 		    LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
 		    for (int i = 0; i < coords.coords.size(0); i++)
 		    {
@@ -2587,7 +2589,7 @@ namespace vistart
         {
 		    torch::manual_seed(1);
             RandomCoordinates262144 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 12)), 0, pow(2, 12) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2627,7 +2629,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2658,7 +2660,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2698,7 +2700,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2730,7 +2732,7 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords;
-            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords.coords.size(0); i++)
             {
@@ -2770,10 +2772,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4) - 1);
 
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2808,10 +2810,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 4)), 0, pow(2, 4) - 1);
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 4)), 0, pow(2, 4) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2844,10 +2846,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates65536 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 8)), 0, pow(2, 8) - 1);
             torch::manual_seed(2);
             RandomCoordinates65536 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 8)), 0, pow(2, 8) - 1);
 
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2880,10 +2882,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates65536 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 8)), 0, pow(2, 8) - 1);
             torch::manual_seed(2);
             RandomCoordinates65536 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 8)), 0, pow(2, 8));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 8)), 0, pow(2, 8) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2916,10 +2918,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates262144 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12) - 1);
             torch::manual_seed(2);
             RandomCoordinates262144 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2952,10 +2954,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates262144 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12) - 1);
             torch::manual_seed(2);
             RandomCoordinates262144 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -2988,10 +2990,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             torch::manual_seed(2);
             RandomCoordinates16777216 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16) - 1);
 
             Coordinate3DwithCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -3024,10 +3026,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             torch::manual_seed(2);
             RandomCoordinates16777216 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
@@ -3060,10 +3062,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             srand((unsigned) time(NULL));
             const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 16));
 
@@ -3086,10 +3088,10 @@ namespace vistart
         {
             torch::manual_seed(1);
             RandomCoordinates256 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             torch::manual_seed(2);
             RandomCoordinates256 coords2;
-            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16));
+            const auto& c2 = torch::clamp(torch::round(coords2.coords * pow(2, 16)), 0, pow(2, 16) - 1);
             srand((unsigned) time(NULL));
             const unsigned int Coordinate3 = rand() % static_cast<unsigned int>(pow(2, 16));
 
@@ -3108,21 +3110,21 @@ namespace vistart
                 );
             }
         }
-		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE_END()*/
         BOOST_AUTO_TEST_SUITE(TestLinkedCoordinateIterator)
         BOOST_AUTO_TEST_CASE(TestLinkedCoordinateIteratorInit)
         {
             torch::manual_seed(1);
             RandomCoordinates16777216 coords1;
-            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12));
+            const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
             for (int i = 0; i < coords1.coords.size(0); i++)
             {
                 std::vector<double> t {
-                        static_cast<double>(c1[i][0].item().toInt()),
-                        static_cast<double>(c1[i][1].item().toInt()),
-                        static_cast<double>(c1[i][2].item().toInt())
+                        static_cast<double>(c1[i][0].item().toFloat()),
+                        static_cast<double>(c1[i][1].item().toFloat()),
+                        static_cast<double>(c1[i][2].item().toFloat())
                 };
                 space.c->set({
                         static_cast<unsigned int>(c1[i][0].item().toInt()),
@@ -3131,15 +3133,20 @@ namespace vistart
                     },
                     std::make_shared<std::vector<double>>(t)
                 );
+                if (i % 100000 == 99999) std::cout << i + 1 << " inserted." << std::endl;
             }
             auto iter = space.c->begin();
             unsigned int count = 0;
+            const std::chrono::steady_clock::time_point time_start = std::chrono::steady_clock::now();
             while (iter != space.c->end())
             {
-                //std::cout << *iter << "(USE_COUNT: " << (*iter)->size() << ") :" << **iter << std::endl;
+                // std::cout << *iter << "(USE_COUNT: " << (*iter)->size() << ") :" << **iter << std::endl;
                 iter++;
                 count++;
             }
+            const std::chrono::steady_clock::time_point time_end_read_header = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration_read_header = std::chrono::duration_cast<std::chrono::duration<double>>(time_end_read_header - time_start);
+std::cout << "Time elapsed of getting all sizes: " << duration_read_header.count() << " s" << std::endl;
             std::cout << "Count: " << count << std::endl;
         }
         BOOST_AUTO_TEST_SUITE_END()
