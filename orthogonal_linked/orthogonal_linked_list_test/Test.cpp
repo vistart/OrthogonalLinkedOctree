@@ -3115,11 +3115,12 @@ namespace vistart
         BOOST_AUTO_TEST_CASE(TestLinkedCoordinateIteratorInit)
         {
             torch::manual_seed(1);
-            RandomCoordinates16777216 coords1;
+            RandomCoordinates262144 coords1;
             const auto& c1 = torch::clamp(torch::round(coords1.coords * pow(2, 12)), 0, pow(2, 12) - 1);
 
             LinkedCoordinate3DwithLinkedCoordinate3DFixture space;
-            const std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
+            std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
+            std::chrono::steady_clock::time_point time_stop;
             for (int i = 0; i < coords1.coords.size(0); i++)
             {
                 std::vector<double> t {
@@ -3135,9 +3136,10 @@ namespace vistart
                     std::make_shared<std::vector<double>>(t)
                 );
                 if (i % 100000 == 99999) {
-                    const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
-                    const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start1);
+                    time_stop = std::chrono::steady_clock::now();
+                    const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
                     std::cout << i + 1 << " inserted." << " Elapsed: " << duration.count() << " s" << std::endl;
+                    time_start1 = std::chrono::steady_clock::now();
                 }
             }
             auto iter = space.c->begin();
