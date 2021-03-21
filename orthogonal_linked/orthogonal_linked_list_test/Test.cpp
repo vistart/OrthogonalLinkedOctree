@@ -3153,7 +3153,7 @@ namespace vistart
             }
             const std::chrono::steady_clock::time_point time_end = std::chrono::steady_clock::now();
             const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start2);
-            std::cout << "Time elapsed of getting all sizes: " << duration.count() << " s" << std::endl;
+            std::cout << "Time elapsed of accessing all voxels: " << duration.count() << " s" << std::endl;
             std::cout << "Count: " << count << std::endl;
         }
         BOOST_AUTO_TEST_SUITE_END()
