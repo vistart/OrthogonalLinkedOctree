@@ -153,6 +153,16 @@ target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_list)
 target_link_libraries(OrthogonalLinkedOctreeWithTorch plyfile)
 target_link_libraries(OrthogonalLinkedOctreeWithTorch point_cloud_base_presentation)
 
+add_executable(OrthogonalLinkedOctreeBenchmark examples/OrthogonalLinkedOctreeBenchmark.cpp)
+if (TORCH_RV EQUAL 0)
+    target_link_libraries(OrthogonalLinkedOctreeBenchmark ${TORCH_LIBRARIES})
+    target_link_libraries(OrthogonalLinkedOctreeBenchmark orthogonal_linked_octree_with_torch)
+endif()
+target_link_libraries(OrthogonalLinkedOctreeBenchmark orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctreeBenchmark orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctreeBenchmark plyfile)
+target_link_libraries(OrthogonalLinkedOctreeBenchmark point_cloud_base_presentation)
+
 # 所有测试项目仅在 Debug 模式下有效。
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory("orthogonal_linked/orthogonal_linked_list_test")

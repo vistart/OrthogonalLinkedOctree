@@ -2194,7 +2194,7 @@ namespace vistart
 			BOOST_REQUIRE_EQUAL((*o1c33d1prev)[2], c31[2]);
 		}
         BOOST_AUTO_TEST_SUITE_END()
-/*
+
         BOOST_AUTO_TEST_SUITE(BenchmarkCoordinate3D)
 		//深度为4
 		BOOST_AUTO_TEST_CASE(TestBenckmarkCoordinate3DAddBatchInDepth4)
@@ -3110,7 +3110,7 @@ namespace vistart
                 );
             }
         }
-		BOOST_AUTO_TEST_SUITE_END()*/
+		BOOST_AUTO_TEST_SUITE_END()
         BOOST_AUTO_TEST_SUITE(TestLinkedCoordinateIterator)
         BOOST_AUTO_TEST_CASE(TestLinkedCoordinateIteratorInit)
         {
