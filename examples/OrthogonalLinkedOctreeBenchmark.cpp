@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
         std::cout << "The total of pointers should not be less than 100000, and the depth should not be less than 4." << std::endl;
         return 0;
     }
+    std::cout << "To insert " << num_pointers << " pointers into the space with the depth of " << depth << ":" << std::endl;
     const at::Tensor coords = at::rand({num_pointers, 3});
     const auto& c1 = torch::clamp(torch::round(coords * pow(2, depth)), 0, pow(2, depth) - 1);
     std::shared_ptr<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>> space = std::make_shared<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>>();
