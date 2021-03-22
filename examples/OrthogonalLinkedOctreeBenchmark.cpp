@@ -67,9 +67,11 @@ int main(int argc, char* argv[])
             time_start1 = std::chrono::steady_clock::now();
         }
     }
-    time_stop = std::chrono::steady_clock::now();
-    const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-    std::cout << coords.size(0) % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    if (coords.size(0) % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << coords.size(0) % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
 
     auto iter = space->begin();
     unsigned int count = 0;
