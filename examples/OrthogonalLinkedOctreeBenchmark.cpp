@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
     const auto& c1 = torch::clamp(torch::round(coords * pow(2, depth)), 0, pow(2, depth) - 1);
     std::shared_ptr<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>> space = std::make_shared<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>>();
 
+    // Inserting
     std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point time_stop;
     for (int i = 0; i < coords.size(0); i++)
@@ -73,6 +74,7 @@ int main(int argc, char* argv[])
         std::cout << coords.size(0) % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
 
+    // Iterating
     auto iter = space->begin();
     unsigned int count = 0;
     const std::chrono::steady_clock::time_point time_start2 = std::chrono::steady_clock::now();
@@ -86,5 +88,65 @@ int main(int argc, char* argv[])
     const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_end - time_start2);
     std::cout << "Time elapsed of accessing all voxels: " << duration.count() << " s" << std::endl;
     std::cout << "Count: " << count << std::endl;
+
+    // Checking if exists
+    std::cout << "Checking if exists: " << std::endl;
+    const at::Tensor coords_to_be_compared = at::rand({num_pointers, 3});
+    const auto& c2 = torch::clamp(torch::round(coords_to_be_compared * pow(2, depth)), 0, pow(2, depth) - 1);
+    time_start1 = std::chrono::steady_clock::now();
+    for(int i=0; i< coords_to_be_compared.size(0); i++)
+    {
+        std::vector<double> t{
+                static_cast<double>(c2[i][0].item().toFloat()),
+                static_cast<double>(c2[i][1].item().toFloat()),
+                static_cast<double>(c2[i][2].item().toFloat())
+        };
+        space->exists(
+                {static_cast<unsigned int>(c2[i][0].item().toInt()),
+                 static_cast<unsigned int>(c2[i][1].item().toInt()),
+                 static_cast<unsigned int>(c2[i][2].item().toInt())}
+        );
+        if (i % 100000 == 99999) {
+            time_stop = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+            std::cout << i + 1 << " checked." << " Elapsed: " << duration.count() << " s" << std::endl;
+            time_start1 = std::chrono::steady_clock::now();
+        }
+    }
+    if (coords_to_be_compared.size(0) % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << coords_to_be_compared.size(0) % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
+
+    // Erasing
+    std::cout << "Erasing all voxels: " << std::endl;
+    time_start1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < coords.size(0); i++)
+    {
+        std::vector<double> t {
+                static_cast<double>(c1[i][0].item().toFloat()),
+                static_cast<double>(c1[i][1].item().toFloat()),
+                static_cast<double>(c1[i][2].item().toFloat())
+        };
+        space->erase({
+                           static_cast<unsigned int>(c1[i][0].item().toInt()),
+                           static_cast<unsigned int>(c1[i][1].item().toInt()),
+                           static_cast<unsigned int>(c1[i][2].item().toInt())
+                   }
+        );
+        if (i % 100000 == 99999) {
+            time_stop = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+            std::cout << i + 1 << " erased." << " Elapsed: " << duration.count() << " s" << std::endl;
+            time_start1 = std::chrono::steady_clock::now();
+        }
+    }
+    if (coords.size(0) % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << coords.size(0) % 100000 << " erased." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
+    std::cout << "The remaining voxel(s): " << space->size() << std::endl;
     return 0;
 }
