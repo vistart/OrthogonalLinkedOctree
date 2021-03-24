@@ -17,37 +17,22 @@
 #include <torch/torch.h>
 #include "../file_format/point_cloud_base_presentation/Point.h"
 #include "../orthogonal_linked/orthogonal_linked_octree_with_torch/LinkedOctree.h"
+#include "../orthogonal_linked/orthogonal_linked_list/Coordinate.h"
 #include <chrono>
 
 
 using namespace std;
 
-int main(int argc, char* argv[])
+void orthogonal_linked_octree_benchmark(const at::Tensor& c1, const at::Tensor& c2, unsigned int depth = 12)
 {
-    unsigned int num_pointers = 262144;
-    unsigned int depth = 12;
-    if (argc > 1)
-    {
-        num_pointers = atoi(argv[1]);
-        if (argc > 2)
-        {
-            depth = atoi(argv[2]);
-        }
-    }
-    if (num_pointers < 100000 || depth < 4) {
-        std::cout << "The total of pointers should not be less than 100000, and the depth should not be less than 4." << std::endl;
-        return 0;
-    }
-    std::cout << "To insert " << num_pointers << " pointers into the space with the depth of " << depth << ":" << std::endl;
-    torch::manual_seed(1);
-    const at::Tensor coords = at::rand({num_pointers, 3});
-    const auto& c1 = torch::clamp(torch::round(coords * pow(2, depth)), 0, pow(2, depth) - 1);
+    std::cout << "To insert " << c1.size(0) << " pointers into the orthogonal linked space with the depth of " << depth << ":" << std::endl;
     std::shared_ptr<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>> space = std::make_shared<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>>();
 
     // Inserting
+    const auto c1_size = c1.size(0);
     std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point time_stop;
-    for (int i = 0; i < coords.size(0); i++)
+    for (int i = 0; i < c1_size; i++)
     {
         std::vector<double> t {
                 static_cast<double>(c1[i][0].item().toFloat()),
@@ -55,23 +40,23 @@ int main(int argc, char* argv[])
                 static_cast<double>(c1[i][2].item().toFloat())
         };
         space->set({
-                             static_cast<unsigned int>(c1[i][0].item().toInt()),
-                             static_cast<unsigned int>(c1[i][1].item().toInt()),
-                             static_cast<unsigned int>(c1[i][2].item().toInt())
-                     },
-                     std::make_shared<std::vector<double>>(t)
+                           static_cast<unsigned int>(c1[i][0].item().toInt()),
+                           static_cast<unsigned int>(c1[i][1].item().toInt()),
+                           static_cast<unsigned int>(c1[i][2].item().toInt())
+                   },
+                   std::make_shared<std::vector<double>>(t)
         );
         if (i % 100000 == 99999) {
             time_stop = std::chrono::steady_clock::now();
             const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-            std::cout << i + 1 << " inserted." << " Elapsed: " << duration.count() << " s" << std::endl;
+            std::cout << (i + 1) / 1000 << "k inserted." << " Elapsed: " << duration.count() << " s" << std::endl;
             time_start1 = std::chrono::steady_clock::now();
         }
     }
-    if (coords.size(0) % 100000) {
+    if (c1_size % 100000) {
         time_stop = std::chrono::steady_clock::now();
         const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-        std::cout << coords.size(0) % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+        std::cout << c1_size % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
 
     // Iterating
@@ -91,10 +76,9 @@ int main(int argc, char* argv[])
 
     // Checking if exists
     std::cout << "Checking if exists: " << std::endl;
-    const at::Tensor coords_to_be_compared = at::rand({num_pointers, 3});
-    const auto& c2 = torch::clamp(torch::round(coords_to_be_compared * pow(2, depth)), 0, pow(2, depth) - 1);
+    const auto c2_size = c2.size(0);
     time_start1 = std::chrono::steady_clock::now();
-    for(int i=0; i< coords_to_be_compared.size(0); i++)
+    for(int i=0; i < c2_size; i++)
     {
         std::vector<double> t{
                 static_cast<double>(c2[i][0].item().toFloat()),
@@ -109,20 +93,20 @@ int main(int argc, char* argv[])
         if (i % 100000 == 99999) {
             time_stop = std::chrono::steady_clock::now();
             const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-            std::cout << i + 1 << " checked." << " Elapsed: " << duration.count() << " s" << std::endl;
+            std::cout << (i + 1) / 1000 << "k checked." << " Elapsed: " << duration.count() << " s" << std::endl;
             time_start1 = std::chrono::steady_clock::now();
         }
     }
-    if (coords_to_be_compared.size(0) % 100000) {
+    if (c2_size % 100000) {
         time_stop = std::chrono::steady_clock::now();
         const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-        std::cout << coords_to_be_compared.size(0) % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+        std::cout << c2_size % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
 
     // Erasing
     std::cout << "Erasing all voxels: " << std::endl;
     time_start1 = std::chrono::steady_clock::now();
-    for (int i = 0; i < coords.size(0); i++)
+    for (int i = 0; i < c1_size; i++)
     {
         std::vector<double> t {
                 static_cast<double>(c1[i][0].item().toFloat()),
@@ -130,23 +114,150 @@ int main(int argc, char* argv[])
                 static_cast<double>(c1[i][2].item().toFloat())
         };
         space->erase({
-                           static_cast<unsigned int>(c1[i][0].item().toInt()),
-                           static_cast<unsigned int>(c1[i][1].item().toInt()),
-                           static_cast<unsigned int>(c1[i][2].item().toInt())
-                   }
+                             static_cast<unsigned int>(c1[i][0].item().toInt()),
+                             static_cast<unsigned int>(c1[i][1].item().toInt()),
+                             static_cast<unsigned int>(c1[i][2].item().toInt())
+                     }
         );
         if (i % 100000 == 99999) {
             time_stop = std::chrono::steady_clock::now();
             const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-            std::cout << i + 1 << " erased." << " Elapsed: " << duration.count() << " s" << std::endl;
+            std::cout << (i + 1) / 1000 << "k erased." << " Elapsed: " << duration.count() << " s" << std::endl;
             time_start1 = std::chrono::steady_clock::now();
         }
     }
-    if (coords.size(0) % 100000) {
+    if (c1_size % 100000) {
         time_stop = std::chrono::steady_clock::now();
         const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
-        std::cout << coords.size(0) % 100000 << " erased." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+        std::cout << c1_size % 100000 << " erased." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
     std::cout << "The remaining voxel(s): " << space->size() << std::endl;
+}
+
+void coordinated_octree_benchmark(const at::Tensor& c1, const at::Tensor& c2, unsigned int depth = 12)
+{
+    std::cout << "To insert " << c1.size(0) << " pointers into the coordinated space with the depth of " << depth << ":" << std::endl;
+    std::shared_ptr<vistart::orthogonal_linked_list::Coordinate<3,std::vector<double>>> space = std::make_shared<vistart::orthogonal_linked_list::LinkedCoordinate<3,std::vector<double>>>();
+
+    // Inserting
+    const auto c1_size = c1.size(0);
+    std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point time_stop;
+    for (int i = 0; i < c1_size; i++)
+    {
+        std::vector<double> t {
+                static_cast<double>(c1[i][0].item().toFloat()),
+                static_cast<double>(c1[i][1].item().toFloat()),
+                static_cast<double>(c1[i][2].item().toFloat())
+        };
+        space->set({
+                           static_cast<unsigned int>(c1[i][0].item().toInt()),
+                           static_cast<unsigned int>(c1[i][1].item().toInt()),
+                           static_cast<unsigned int>(c1[i][2].item().toInt())
+                   },
+                   std::make_shared<std::vector<double>>(t)
+        );
+        if (i % 100000 == 99999) {
+            time_stop = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+            std::cout << (i + 1) / 1000 << "k inserted." << " Elapsed: " << duration.count() << " s" << std::endl;
+            time_start1 = std::chrono::steady_clock::now();
+        }
+    }
+    if (c1_size % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << c1_size % 100000 << " inserted." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
+
+    // Checking if exists
+    std::cout << "Checking if exists: " << std::endl;
+    const auto c2_size = c2.size(0);
+    time_start1 = std::chrono::steady_clock::now();
+    for(int i=0; i< c2_size; i++)
+    {
+        std::vector<double> t{
+                static_cast<double>(c2[i][0].item().toFloat()),
+                static_cast<double>(c2[i][1].item().toFloat()),
+                static_cast<double>(c2[i][2].item().toFloat())
+        };
+        space->exists(
+                {static_cast<unsigned int>(c2[i][0].item().toInt()),
+                 static_cast<unsigned int>(c2[i][1].item().toInt()),
+                 static_cast<unsigned int>(c2[i][2].item().toInt())}
+        );
+        if (i % 100000 == 99999) {
+            time_stop = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+            std::cout << (i + 1) / 1000 << "k checked." << " Elapsed: " << duration.count() << " s" << std::endl;
+            time_start1 = std::chrono::steady_clock::now();
+        }
+    }
+    if (c2_size % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << c2_size % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
+
+    // Erasing
+    std::cout << "Erasing all voxels: " << std::endl;
+    time_start1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < c1_size; i++)
+    {
+        std::vector<double> t {
+                static_cast<double>(c1[i][0].item().toFloat()),
+                static_cast<double>(c1[i][1].item().toFloat()),
+                static_cast<double>(c1[i][2].item().toFloat())
+        };
+        space->erase({
+                             static_cast<unsigned int>(c1[i][0].item().toInt()),
+                             static_cast<unsigned int>(c1[i][1].item().toInt()),
+                             static_cast<unsigned int>(c1[i][2].item().toInt())
+                     }
+        );
+        if (i % 100000 == 99999) {
+            time_stop = std::chrono::steady_clock::now();
+            const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+            std::cout << (i + 1) / 1000 << "k erased." << " Elapsed: " << duration.count() << " s" << std::endl;
+            time_start1 = std::chrono::steady_clock::now();
+        }
+    }
+    if (c1_size % 100000) {
+        time_stop = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> duration_set = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
+        std::cout << c1_size % 100000 << " erased." << " Elapsed: " << duration_set.count() << " s" << std::endl;
+    }
+    std::cout << "The remaining voxel(s): " << space->size() << std::endl;
+}
+
+int main(int argc, char* argv[])
+{
+    unsigned int num_pointers = 262144;
+    unsigned int depth = 12;
+    unsigned int mode = 3;
+    if (argc > 1)
+    {
+        mode = atoi(argv[1]);
+    }
+    if (argc > 2)
+    {
+        num_pointers = atoi(argv[2]);
+    }
+    if (argc > 3)
+    {
+        depth = atoi(argv[3]);
+    }
+    if (num_pointers < 100000 || depth < 4) {
+        std::cout << "The total of pointers should not be less than 100000, and the depth should not be less than 4." << std::endl;
+        return 0;
+    }
+    torch::manual_seed(1);
+    const at::Tensor coords = at::rand({num_pointers, 3});
+    const auto& c1 = torch::clamp(torch::round(coords * pow(2, depth)), 0, pow(2, depth) - 1);
+    const at::Tensor coords_to_be_compared = at::rand({num_pointers, 3});
+    const auto& c2 = torch::clamp(torch::round(coords_to_be_compared * pow(2, depth)), 0, pow(2, depth) - 1);
+
+    if (mode & 1 == 1) coordinated_octree_benchmark(c1, c2, depth);
+    if (mode & 2 == 2) orthogonal_linked_octree_benchmark(c1, c2, depth);
     return 0;
 }
