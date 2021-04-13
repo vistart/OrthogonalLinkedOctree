@@ -16,8 +16,11 @@
 
 #include <torch/torch.h>
 #include "../file_format/point_cloud_base_presentation/Point.h"
-#include "../orthogonal_linked/orthogonal_linked_octree_with_torch/LinkedOctree.h"
+#include "../orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
 #include "../orthogonal_linked/orthogonal_linked_list/Coordinate.h"
+#include "../file_format/plyfile/PlyVertexList.h"
+#include "../file_format/plyfile/PlyVertex.h"
+#include "../file_format/plyfile/PlyFile.h"
 #include <chrono>
 
 
@@ -103,7 +106,28 @@ void orthogonal_linked_octree_benchmark(const at::Tensor& c1, const at::Tensor& 
         std::cout << c2_size % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
 
-    // 
+    // Getting Tensor
+    std::cout << "Getting Tensors (radius: 2): " << std::endl;
+    const auto radius = 2;
+
+    namespace vp = vistart::point_cloud_base_presentation;
+
+    std::shared_ptr<vistart::orthogonal_linked_octree::LinkedOctree<
+            vp::PlyVertexList,
+            vp::PlyVertex,
+            vp::PlyFile>> pl;
+    iter = space->begin();
+    time_start1 = std::chrono::steady_clock::now();
+    while (iter != space->end())
+    {
+        std::cout << **iter << std::endl;
+        std::vector<unsigned int> c0({
+            static_cast<unsigned int>((**iter)[0]),
+            static_cast<unsigned int>((**iter)[1]),
+            static_cast<unsigned int>((**iter)[2])});
+        auto result = space->GetTensor(c0, radius);
+        iter++;
+    }
 
     // Erasing
     std::cout << "Erasing all voxels: " << std::endl;

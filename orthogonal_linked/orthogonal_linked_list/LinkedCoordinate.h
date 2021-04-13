@@ -218,6 +218,36 @@ namespace vistart
 			}
 #pragma endregion
 
+#pragma region 拼接张量
+
+            /**
+             * 获取指定半径内的立方体体素构成张量。
+             * @param c 坐标
+             * @param radius 指定半径。如果半径为0，则代表只有当前坐标本身。
+             * @return
+             */
+            virtual std::map<std::vector<int>, std::shared_ptr<T>> GetTensor(typename LinkedCoordinate<3, T>::base_coord_col const& c, unsigned int radius = 0) {
+                int x_start = c[0] - radius;
+                int x_end = c[0] + radius;
+                int y_start = c[1] - radius;
+                int y_end = c[1] + radius;
+                int z_start = c[2] - radius;
+                int z_end = c[2] + radius;
+                std::map<std::vector<int>, std::shared_ptr<T>> result;
+                for (int i = x_start; i <= x_end; i++) {
+                    for (int j = y_start; j <= y_end; j++) {
+                        for (int k = z_start; k <= z_end; k++) {
+                            typename orthogonal_linked_list::LinkedCoordinate<3, T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
+                            result.insert({
+                                {static_cast<int>(i), static_cast<int>(j), static_cast<int>(k)},
+                                (i < 0 || j < 0 || k < 0) ? nullptr : this->get({static_cast<int>(i), static_cast<int>(j), static_cast<int>(k)})});
+                        }
+                    }
+                }
+                return result;
+            }
+#pragma endregion
+
 #pragma endregion
 
 #pragma region 设置元素
