@@ -103,6 +103,8 @@ void orthogonal_linked_octree_benchmark(const at::Tensor& c1, const at::Tensor& 
         std::cout << c2_size % 100000 << " checked." << " Elapsed: " << duration_set.count() << " s" << std::endl;
     }
 
+    // 
+
     // Erasing
     std::cout << "Erasing all voxels: " << std::endl;
     time_start1 = std::chrono::steady_clock::now();

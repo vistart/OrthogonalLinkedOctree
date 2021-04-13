@@ -212,6 +212,30 @@ namespace vistart
                 if (r == 0) return NAN;
                 return 1 / static_cast<double>(r);
             }
+            /**
+             * 获取指定半径内的立方体体素构成张量。
+             * @param c 坐标
+             * @param radius 指定半径。如果半径为0，则代表只有当前坐标本身。
+             * @return
+             */
+            virtual std::map<typename orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::base_coord_col, std::shared_ptr<OctreeNode<TPoint>>> GetTensor(typename orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::base_coord_col const& c, unsigned int radius = 0) {
+                int x_start = c[0] - radius;
+                int x_end = c[0] + radius;
+                int y_start = c[1] - radius;
+                int y_end = c[1] - radius;
+                int z_start = c[2] - radius;
+                int z_end = c[2] - radius;
+                std::map<typename orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::base_coord_col, std::shared_ptr<OctreeNode<TPoint>>> result;
+                for (int i = x_start; i < x_end; i++) {
+                    for (int j = y_start; j < y_end; j++) {
+                        for (int k = z_start; k < z_end; k++) {
+                            typename orthogonal_linked_list::LinkedCoordinate<3, OctreeNode<TPoint>>::base_coord_col const c0 {i, j, k};
+                            result.insert({{i, j, k}, this->get(c)});
+                        }
+                    }
+                }
+                return result;
+            }
         protected:
             unsigned char depth = 12; // The depth range is limited to between 1 and 127.
             /**
