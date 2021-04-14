@@ -120,7 +120,7 @@ void orthogonal_linked_octree_benchmark(const at::Tensor& c1, const at::Tensor& 
     time_start1 = std::chrono::steady_clock::now();
     while (iter != space->end())
     {
-        std::cout << **iter << std::endl;
+        //std::cout << **iter << std::endl;
         std::vector<unsigned int> c0({
             static_cast<unsigned int>((**iter)[0]),
             static_cast<unsigned int>((**iter)[1]),

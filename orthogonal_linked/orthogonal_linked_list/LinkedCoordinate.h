@@ -239,8 +239,8 @@ namespace vistart
                         for (int k = z_start; k <= z_end; k++) {
                             typename orthogonal_linked_list::LinkedCoordinate<3, T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
                             result.insert({
-                                {static_cast<int>(i), static_cast<int>(j), static_cast<int>(k)},
-                                (i < 0 || j < 0 || k < 0) ? nullptr : this->get({static_cast<int>(i), static_cast<int>(j), static_cast<int>(k)})});
+                                {i, j, k},
+                                (i < 0 || j < 0 || k < 0) ? nullptr : this->get(c0)});
                         }
                     }
                 }
