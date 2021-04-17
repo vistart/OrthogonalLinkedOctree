@@ -229,12 +229,26 @@ namespace vistart
                     this->lower = lower;
                     this->upper = upper;
                     this->null_position_value = null_position_value;
+                    build_tensor(o);
                 }
-                tensor(origin* o, typename LinkedCoordinate<3, __T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<__T> null_position_value = nullptr)
+                tensor(origin* o, typename LinkedCoordinate<__D, __T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<__T> null_position_value = nullptr)
                 {
-                    this->lower = {c[0] - radius, c[1] - radius, c[2] - radius};
-                    this->upper = {c[0] + radius, c[1] + radius, c[2] + radius};
+                    for (int i = 0; i < __D; i++)
+                    {
+                         this->lower[i] = c[i] - radius;
+                         this->upper[i] = c[i] + radius;
+                    }
                     this->null_position_value = null_position_value;
+                    build_tensor(o);
+                }
+            private:
+                typename Coordinate<__D, __T>::coordinates_type lower;
+                typename Coordinate<__D, __T>::coordinates_type upper;
+                std::shared_ptr<T> null_position_value = nullptr;
+                std::map<std::vector<int>, std::shared_ptr<__T>> result;
+                origin* o_ptr;
+                void build_tensor(origin* o)
+                {
                     for (int i = this->lower[0]; i <= this->upper[0]; i++)
                         for (int j = this->lower[1]; j <= this->upper[1]; j++)
                             for (int k = this->lower[2]; k <= this->upper[2]; k++)
@@ -245,12 +259,6 @@ namespace vistart
                                     (i < 0 || j < 0 || k < 0) ? nullptr : o->get(c0)});
                             }
                 }
-            private:
-                typename Coordinate<__D, __T>::coordinates_type lower;
-                typename Coordinate<__D, __T>::coordinates_type upper;
-                std::shared_ptr<T> null_position_value = nullptr;
-                std::map<std::vector<int>, std::shared_ptr<__T>> result;
-                origin* o_ptr;
             };
 			tensor<D, T> get_tensor(typename LinkedCoordinate<3, T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<T> null_position_value = nullptr)
             {
