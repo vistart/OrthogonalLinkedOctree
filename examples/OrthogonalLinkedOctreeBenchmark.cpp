@@ -125,7 +125,7 @@ void orthogonal_linked_octree_benchmark(const at::Tensor& c1, const at::Tensor& 
             static_cast<unsigned int>((**iter)[0]),
             static_cast<unsigned int>((**iter)[1]),
             static_cast<unsigned int>((**iter)[2])});
-        auto result = space->GetTensor(c0, radius);
+        auto result = space->get_tensor(c0, radius);
         iter++;
     }
 

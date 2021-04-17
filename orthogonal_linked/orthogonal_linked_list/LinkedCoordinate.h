@@ -149,7 +149,7 @@ namespace vistart
                 using origin = LinkedCoordinate<__D, __T>;
 			    using head_and_tail_iterator = typename origin::head_and_tail_in_dimension::iterator;
 			    using value_coordinate = typename origin::coordinates_type;
-			    iterator(origin* o, unsigned int d, unsigned int di = D - 1) : o_ptr(o), dimension(di) {
+			    iterator(origin* o, unsigned int d, unsigned int di = __D - 1) : o_ptr(o), dimension(di) {
 			        if (d == BEGIN)
                     {
 			            ht_iter = o_ptr->head_and_tail_in_all_dimensions[dimension].begin();
@@ -219,32 +219,42 @@ namespace vistart
 #pragma endregion
 
 #pragma region 拼接张量
-
-            /**
-             * 获取指定半径内的立方体体素构成张量。
-             * @param c 坐标
-             * @param radius 指定半径。如果半径为0，则代表只有当前坐标本身。
-             * @return
-             */
-            virtual std::map<std::vector<int>, std::shared_ptr<T>> GetTensor(typename LinkedCoordinate<3, T>::base_coord_col const& c, unsigned int radius = 0) {
-                int x_start = c[0] - radius;
-                int x_end = c[0] + radius;
-                int y_start = c[1] - radius;
-                int y_end = c[1] + radius;
-                int z_start = c[2] - radius;
-                int z_end = c[2] + radius;
-                std::map<std::vector<int>, std::shared_ptr<T>> result;
-                for (int i = x_start; i <= x_end; i++) {
-                    for (int j = y_start; j <= y_end; j++) {
-                        for (int k = z_start; k <= z_end; k++) {
-                            typename orthogonal_linked_list::LinkedCoordinate<3, T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
-                            result.insert({
-                                {i, j, k},
-                                (i < 0 || j < 0 || k < 0) ? nullptr : this->get(c0)});
-                        }
-                    }
+            template<unsigned char __D, typename __T>
+            struct tensor
+            {
+                using origin = LinkedCoordinate<__D, __T>;
+                tensor() = delete;
+                tensor(origin* o, typename Coordinate<__D, __T>::coordinates_type const& lower, typename Coordinate<__D, __T>::coordinates_type const& upper, std::shared_ptr<__T> null_position_value = nullptr)
+                {
+                    this->lower = lower;
+                    this->upper = upper;
+                    this->null_position_value = null_position_value;
                 }
-                return result;
+                tensor(origin* o, typename LinkedCoordinate<3, __T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<__T> null_position_value = nullptr)
+                {
+                    this->lower = {c[0] - radius, c[1] - radius, c[2] - radius};
+                    this->upper = {c[0] + radius, c[1] + radius, c[2] + radius};
+                    this->null_position_value = null_position_value;
+                    for (int i = this->lower[0]; i <= this->upper[0]; i++)
+                        for (int j = this->lower[1]; j <= this->upper[1]; j++)
+                            for (int k = this->lower[2]; k <= this->upper[2]; k++)
+                            {
+                                typename orthogonal_linked_list::LinkedCoordinate<3, __T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
+                                result.insert({
+                                    {i, j, k},
+                                    (i < 0 || j < 0 || k < 0) ? nullptr : o->get(c0)});
+                            }
+                }
+            private:
+                typename Coordinate<__D, __T>::coordinates_type lower;
+                typename Coordinate<__D, __T>::coordinates_type upper;
+                std::shared_ptr<T> null_position_value = nullptr;
+                std::map<std::vector<int>, std::shared_ptr<__T>> result;
+                origin* o_ptr;
+            };
+			tensor<D, T> get_tensor(typename LinkedCoordinate<3, T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<T> null_position_value = nullptr)
+            {
+			    return tensor<D, T>(this, c, radius, null_position_value);
             }
 #pragma endregion
 
