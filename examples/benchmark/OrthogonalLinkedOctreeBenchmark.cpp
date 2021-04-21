@@ -15,12 +15,12 @@
 #include <cstdlib>
 
 #include <torch/torch.h>
-#include "../file_format/point_cloud_base_presentation/Point.h"
-#include "../orthogonal_linked/orthogonal_linked_octree/LinkedOctree.h"
-#include "../orthogonal_linked/orthogonal_linked_list/Coordinate.h"
-#include "../file_format/plyfile/PlyVertexList.h"
-#include "../file_format/plyfile/PlyVertex.h"
-#include "../file_format/plyfile/PlyFile.h"
+#include "Point.h"
+#include "LinkedOctree.h"
+#include "Coordinate.h"
+#include "PlyVertexList.h"
+#include "PlyVertex.h"
+#include "PlyFile.h"
 #include <chrono>
 
 

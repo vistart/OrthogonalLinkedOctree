@@ -1,0 +1,23 @@
+set(CMAKE_CXX_STANDARD 17)
+# 添加链接
+add_executable(OrthogonalLinkedOctreeInPly OrthogonalLinkedOctreeInPly.cpp)
+if (TORCH_RV EQUAL 0)
+    target_link_libraries(OrthogonalLinkedOctreeInPly ${TORCH_LIBRARIES})
+    target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_octree_with_torch)
+endif()
+target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctreeInPly orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctreeInPly plyfile)
+target_link_libraries(OrthogonalLinkedOctreeInPly point_cloud_base_presentation)
+
+add_executable(OrthogonalLinkedOctreeWithTorch OrthogonalLinkedOctreeWithTorch.cpp)
+if (TORCH_RV EQUAL 0)
+    target_link_libraries(OrthogonalLinkedOctreeWithTorch ${TORCH_LIBRARIES})
+    target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_octree_with_torch)
+endif()
+target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_octree)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch orthogonal_linked_list)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch plyfile)
+target_link_libraries(OrthogonalLinkedOctreeWithTorch point_cloud_base_presentation)
+
+add_subdirectory("benchmark")
