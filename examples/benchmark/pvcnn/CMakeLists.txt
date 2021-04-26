@@ -70,3 +70,13 @@ target_link_libraries(PVCNNBenchmark ${PYTHON_LIBRARIES})
 target_link_libraries(PVCNNBenchmark ${TORCH_LIBRARIES})
 target_link_libraries(PVCNNBenchmark ball_query)
 target_link_libraries(PVCNNBenchmark voxelization)
+
+if (MSVC)
+    message(STATUS "In Windows, We should copy all .dll files related torch manually to ensure the program ran successfully.")
+        file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+        add_custom_command(TARGET PVCNNBenchmark
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${TORCH_DLLS}
+                $<TARGET_FILE_DIR:PVCNNBenchmark>)
+endif()
