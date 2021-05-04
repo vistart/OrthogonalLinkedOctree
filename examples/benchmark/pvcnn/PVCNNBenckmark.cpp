@@ -16,22 +16,41 @@
 #include "ball_query/ball_query.hpp"
 #include <torch/torch.h>
 #include <chrono>
+#include <cuda_runtime.h>
+#ifndef CUDA_DURATION_EVENT
+#define CUDA_DURATION_EVENT 0
+#endif
 void PVCNNBenchmark(const at::Tensor& c1, const at::Tensor& c2, unsigned int depth = 12)
 {
+#if CUDA_DURATION_EVENT
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start, 0);
+    ball_query_forward(c1.cuda(), c2.cuda(), 1, 100);
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    float elapsedTime;
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    std::cout << "1 queried." << "Elapsed: " << elapsedTime << " ms." << std::endl;
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
+#else
     const auto c1_size = c1.size(0);
     std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point time_stop;
     ball_query_forward(c1.cuda(), c2.cuda(), 1, 100);
-    time_stop = std::chrono::steady_clock::now();
+    cudaDeviceSynchronize();
+    std::chrono::steady_clock::time_point time_stop = std::chrono::steady_clock::now();
     const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
     std::cout << "1 queried." << " Elapsed: " << duration.count() << " s" << std::endl;
     time_start1 = std::chrono::steady_clock::now();
+#endif
 }
 int main(int argc, char* argv[])
 {
 	std::cout << "PVCNNBenchmark: " << std::endl;
-    unsigned int num_pointers = 262144;
-    unsigned int batch = 240;
+    unsigned int num_pointers = 10000000;
+    unsigned int batch = 250;
     unsigned int mode = 3;
     if (argc > 1)
     {
@@ -50,10 +69,13 @@ int main(int argc, char* argv[])
         return 0;
     }
     torch::manual_seed(1);
-    const at::Tensor coords = at::rand({batch, 3, num_pointers / batch});
-    const auto& c1 = torch::clamp(torch::round(coords * pow(2, 12)), 0, pow(2, 12) - 1);
-    const at::Tensor coords_to_be_compared = at::rand({batch, 3, num_pointers / batch});
-    const auto& c2 = torch::clamp(torch::round(coords_to_be_compared * pow(2, 12)), 0, pow(2, 12) - 1);
-    PVCNNBenchmark(c1, c2);
+	for (int i = 0; i < batch; i++)
+	{
+        const at::Tensor coords = at::rand({ batch, 3, num_pointers / batch });
+        const auto& c1 = torch::clamp(torch::round(coords * pow(2, 12)), 0, pow(2, 12) - 1);
+        const at::Tensor coords_to_be_compared = at::rand({ batch, 3, num_pointers / batch });
+        const auto& c2 = torch::clamp(torch::round(coords_to_be_compared * pow(2, 12)), 0, pow(2, 12) - 1);
+        PVCNNBenchmark(c1, c2);
+	}
 	return 0;
 }
