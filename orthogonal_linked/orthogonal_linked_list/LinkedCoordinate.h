@@ -235,8 +235,8 @@ namespace vistart
                 {
                     for (int i = 0; i < __D; i++)
                     {
-                         this->lower[i] = c[i] - radius;
-                         this->upper[i] = c[i] + radius;
+                         this->lower.push_back(c[i] - radius);
+                         this->upper.push_back(c[i] + radius);
                     }
                     this->null_position_value = null_position_value;
                     build_tensor(o);
@@ -249,18 +249,25 @@ namespace vistart
                 origin* o_ptr;
                 void build_tensor(origin* o)
                 {
+
                     for (int i = this->lower[0]; i <= this->upper[0]; i++)
-                        for (int j = this->lower[1]; j <= this->upper[1]; j++)
+                        for (int j = this->lower[1]; j <= this->upper[1]; j++)/*
+                        {
+                            typename orthogonal_linked_list::LinkedCoordinate<__D, __T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j)};
+                            result.insert({
+                                                  {i, j},
+                                                  (i < 0 || j < 0) ? nullptr : o->get(c0)});
+                        }*/
                             for (int k = this->lower[2]; k <= this->upper[2]; k++)
                             {
-                                typename orthogonal_linked_list::LinkedCoordinate<3, __T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
+                                typename orthogonal_linked_list::LinkedCoordinate<__D, __T>::base_coord_col const c0 {static_cast<unsigned int>(i), static_cast<unsigned int>(j), static_cast<unsigned int>(k)};
                                 result.insert({
                                     {i, j, k},
                                     (i < 0 || j < 0 || k < 0) ? nullptr : o->get(c0)});
                             }
                 }
             };
-			tensor<D, T> get_tensor(typename LinkedCoordinate<3, T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<T> null_position_value = nullptr)
+			tensor<D, T> get_tensor(typename LinkedCoordinate<D, T>::base_coord_col const& c, unsigned int radius = 0, std::shared_ptr<T> null_position_value = nullptr)
             {
 			    return tensor<D, T>(this, c, radius, null_position_value);
             }

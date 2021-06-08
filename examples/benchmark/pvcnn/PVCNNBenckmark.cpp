@@ -37,12 +37,15 @@ void PVCNNBenchmark(const at::Tensor& c1, const at::Tensor& c2, unsigned int dep
     cudaEventDestroy(stop);
 #else
     const auto c1_size = c1.size(0);
+    // PVCNN
     std::chrono::steady_clock::time_point time_start1 = std::chrono::steady_clock::now();
     ball_query_forward(c1.cuda(), c2.cuda(), 1, 100);
     cudaDeviceSynchronize();
     std::chrono::steady_clock::time_point time_stop = std::chrono::steady_clock::now();
     const std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(time_stop - time_start1);
     std::cout << "1 queried." << " Elapsed: " << std::setw(12) << duration.count() << " s" << std::endl;
+
+    // OLPVCNN
     time_start1 = std::chrono::steady_clock::now();
 #endif
 }
