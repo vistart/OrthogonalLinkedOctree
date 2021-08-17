@@ -48,7 +48,7 @@ $ git clone https://github.com/vistart/OrthogonalLinkedOctree
 
 此项目使用到 [Boost](https://www.boost.org) 和 [pybind11](https://github.com/pybind/pybind11)。
 
-以上若干项目均使用 [vcpkg](https://github.com/microsoft/vcpkg) 管理，但此项目并未将需要用到的第三方库置于子项目。因此，在使用前，您需要做一下准备：
+以上若干项目均使用 [vcpkg](https://github.com/microsoft/vcpkg) 管理，但此项目并未将需要用到的第三方库置于子项目。因此，在使用前，您需要做以下准备：
 
 ### 安装 [vcpkg](https://github.com/microsoft/vcpkg)
 
