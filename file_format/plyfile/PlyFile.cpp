@@ -118,7 +118,7 @@ bool vistart::point_cloud_base_presentation::PlyFile::read_element_vertex_names(
 	this->point_list->read_element_vertex_names(f);
 	PlyVertex::VertexName const back = this->point_list->names.back();
 #ifdef _DEBUG
-	cout << "Property: " << back.name << " | " << back.type << endl;
+	cout << "[" << __FILENAME__ << ":" << __LINE << "] debug: Property: " << back.name << " | " << back.type << endl;
 #endif
 	return true;
 }
